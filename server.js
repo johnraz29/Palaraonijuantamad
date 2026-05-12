@@ -566,18 +566,13 @@ app.get('/admin/slot-config', ensureAdmin, ensureAdminPanelAccess, (req, res) =>
 // 9. FINANCIAL ROUTES (Topup, Withdraw, PayMongo)
 // ==========================================
 
-app.post('/paymongo/gcash', ensureAuthenticated, async (req, res) => {
+app.post('/topup/paymongo', ensureAuthenticated, async (req, res) => {
     const { amount } = req.body;
+    const topupAmount = parseFloat(amount);
 
-    const parsedAmount = Number(amount);
-
-    if (!parsedAmount || parsedAmount <= 0) {
-        req.flash('error', 'Invalid amount');
-        return res.redirect('/topup');
+    if (isNaN(topupAmount) || topupAmount < 100) {
+        return res.status(400).json({ error: 'Minimum top-up is ₱100.' });
     }
-
-    const txRef = uuidv4();
-    const amountInCentavos = Math.round(parsedAmount * 100);
 
     try {
         const response = await axios.post(
@@ -585,69 +580,73 @@ app.post('/paymongo/gcash', ensureAuthenticated, async (req, res) => {
             {
                 data: {
                     attributes: {
-                        billing: {
-                            name: req.user.name,
-                            email: req.user.email,
-                            phone: req.user.phone || '09123456789'
-                        },
-                        send_email_receipt: false,
+                        send_email_receipt: true,
                         show_description: true,
                         show_line_items: true,
-
-                        line_items: [
-                            {
-                                currency: 'PHP',
-                                amount: amountInCentavos,
-                                name: 'Top-up Balance',
-                                quantity: 1
-                            }
-                        ],
-
-                        payment_method_types: ['gcash'],
-
-                        success_url: `${BASE_URL}/pay-success`,
-cancel_url: `${BASE_URL}/pay-failed`,
-
-                        metadata: {
-                            txRef: txRef
-                        }
+                        payment_method_types: ['paymaya'], // Ito ang maglalabas ng QRPh
+                        line_items: [{
+                            currency: 'PHP',
+                            amount: Math.round(topupAmount * 100), 
+                            name: 'Wallet Top-up',
+                            quantity: 1
+                        }],
+                        description: `Top-up for User: ${req.user.name} (ID: ${req.user.id})`,
+                        success_url: `${BASE_URL}/topup/success?session_id={CHECKOUT_SESSION_ID}`,
+                        cancel_url: `${BASE_URL}/dashboard`
                     }
                 }
             },
             {
                 headers: {
-                    accept: 'application/json',
-                    'content-type': 'application/json',
-                    authorization: `Basic ${Buffer.from(PAYMONGO_SECRET + ':').toString('base64')}`
+                    'Content-Type': 'application/json',
+                    'Authorization': `Basic ${Buffer.from(PAYMONGO_SECRET_KEY).toString('base64')}`
                 }
             }
         );
 
         const checkoutUrl = response.data.data.attributes.checkout_url;
+        res.json({ checkoutUrl });
+    } catch (error) {
+        console.error('PayMongo Top-up Error:', error.response ? error.response.data : error.message);
+        res.status(500).json({ error: 'Failed to initiate top-up.' });
+    }
+});
 
-        // save transaction
-        db.run(
-            'INSERT INTO transactions (id, user_id, type, amount, status, reference, created_at) VALUES (?,?,?,?,?,?,?)',
-            [
-                txRef,
-                req.user.id,
-                'topup',
-                parsedAmount,
-                'pending_gcash',
-                txRef,
-                new Date().toISOString()
-            ]
+// HUWAG KALIMUTAN: Ilagay ito sa ilalim para gumana ang pag-update ng balance
+app.get('/topup/success', ensureAuthenticated, async (req, res) => {
+    const sessionId = req.query.session_id;
+    try {
+        const response = await axios.get(
+            `https://api.paymongo.com/v1/checkout_sessions/${sessionId}`,
+            {
+                headers: {
+                    Authorization: `Basic ${Buffer.from(PAYMONGO_SECRET_KEY).toString('base64')}`
+                }
+            }
         );
 
-        res.redirect(checkoutUrl);
+        const paymentStatus = response.data.data.attributes.payment_intent.attributes.status;
 
+        if (paymentStatus === 'succeeded') {
+            const amountInCents = response.data.data.attributes.line_items[0].amount;
+            const finalAmount = amountInCents / 100;
+
+            db.run('UPDATE users SET balance = balance + ? WHERE id = ?', [finalAmount, req.user.id], (err) => {
+                if (err) return res.status(500).send("DB Error");
+                
+                db.run('INSERT INTO transactions (id, user_id, type, amount, status, reference, created_at) VALUES (?,?,?,?,?,?,?)',
+                    [uuidv4(), req.user.id, 'topup', finalAmount, 'confirmed', 'QRPh_PayMongo', new Date().toISOString()]
+                );
+
+                req.flash('success', `₱${finalAmount} added to your wallet!`);
+                res.redirect('/dashboard');
+            });
+        } else {
+            req.flash('error', 'Payment failed.');
+            res.redirect('/dashboard');
+        }
     } catch (error) {
-        console.log("PAYMONGO CHECKOUT ERROR:");
-        console.log(error.response?.data);
-        console.log(error.message);
-
-        req.flash('error', 'Payment gateway error.');
-        res.redirect('/topup');
+        res.redirect('/dashboard');
     }
 });
 
