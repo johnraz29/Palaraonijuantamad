@@ -92,7 +92,7 @@ app.use((req, res, next) => {
 initDb();
 
 
-
+app.use(express.json());
 
 // ==========================================
 // 3. PASSPORT AUTHENTICATION STRATEGY
