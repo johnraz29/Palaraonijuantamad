@@ -35,41 +35,69 @@
 </main>
 
 <script>
-const selectedNumbers = [];
-const maxNumbers = 6;
+document.addEventListener('DOMContentLoaded', () => {
 
-const buttons = document.querySelectorAll('.number-btn');
-const numbersInput = document.getElementById('numbersInput');
-const selectedNumbersDisplay = document.getElementById('selectedNumbers');
+    let selectedNumbers = [];
+    const maxNumbers = 6;
 
-buttons.forEach(btn => {
-    btn.addEventListener('click', () => {
-        const num = parseInt(btn.dataset.number);
-        if (selectedNumbers.includes(num)) {
-            // Remove number if clicked again
-            const index = selectedNumbers.indexOf(num);
-            selectedNumbers.splice(index, 1);
-            btn.classList.remove('selected');
-        } else {
-            if (selectedNumbers.length < maxNumbers) {
+    const buttons = document.querySelectorAll('.number-btn');
+    const numbersInput = document.getElementById('numbersInput');
+    const selectedNumbersDisplay = document.getElementById('selectedNumbers');
+
+    buttons.forEach(btn => {
+
+        btn.addEventListener('click', function(e) {
+
+            e.preventDefault();
+
+            const num = parseInt(this.dataset.number);
+
+            // REMOVE NUMBER
+            if (selectedNumbers.includes(num)) {
+
+                selectedNumbers = selectedNumbers.filter(n => n !== num);
+
+                this.classList.remove('selected');
+
+            } 
+            // ADD NUMBER
+            else {
+
+                if (selectedNumbers.length >= maxNumbers) {
+                    alert('6 numbers only!');
+                    return;
+                }
+
                 selectedNumbers.push(num);
-                btn.classList.add('selected');
-            } else {
-                alert('You can only select 6 numbers!');
-            }
-        }
-        // Update hidden input and display
-        numbersInput.value = selectedNumbers.join(',');
-        selectedNumbersDisplay.textContent = selectedNumbers.length > 0 ? selectedNumbers.join(', ') : 'None';
-    });
-});
 
-// Validate on form submit
-document.getElementById('betForm').addEventListener('submit', e => {
-    if (selectedNumbers.length !== maxNumbers) {
-        e.preventDefault();
-        alert('Please select exactly 6 unique numbers!');
-    }
+                this.classList.add('selected');
+            }
+
+            // UPDATE DISPLAY
+            numbersInput.value = selectedNumbers.join(',');
+
+            selectedNumbersDisplay.textContent =
+                selectedNumbers.length > 0
+                ? selectedNumbers.join(', ')
+                : 'None';
+        });
+
+    });
+
+    // FORM VALIDATION
+    document.getElementById('betForm').addEventListener('submit', function(e) {
+
+        if (selectedNumbers.length !== 6) {
+
+            e.preventDefault();
+
+            alert('Please select exactly 6 numbers.');
+
+            return false;
+        }
+
+    });
+
 });
 </script>
 </body>
