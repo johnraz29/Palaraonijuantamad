@@ -92,7 +92,7 @@ app.use((req, res, next) => {
 initDb();
 
 
-app.use(express.json());
+
 
 // ==========================================
 // 3. PASSPORT AUTHENTICATION STRATEGY
@@ -588,7 +588,9 @@ app.post('/paymongo/gcash', ensureAuthenticated, async (req, res) => {
                         billing: {
                             name: req.user.name,
                             email: req.user.email,
-                            phone: req.user.phone || '09123456789'
+                            phone: req.user.phone
+    ? req.user.phone.replace(/^0/, '+63')
+    : '+639123456789'
                         },
                         send_email_receipt: false,
                         show_description: true,
