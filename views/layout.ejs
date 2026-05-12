@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Palaro Ni Juan</title>
+
+    <link rel="icon" type="image/png" href="/images/Logopalaronijuan.png" />
+    <link rel="stylesheet" href="/layout.css" />
+    
+   <style>
+    /* Pulse Animation para sa Sabong Link */
+    .sabong-link-inner {
+        color: #ff5555 !important;
+        font-weight: bold;
+        animation: pulse-text 2s infinite;
+    }
+
+    @keyframes pulse-text {
+        0% { opacity: 1; }
+        50% { opacity: 0.5; }
+        100% { opacity: 1; }
+    }
+
+    /* --- FIXED DROPDOWN LOGIC --- */
+    .dropdown {
+        position: relative;
+        display: inline-block;
+        z-index: 9999;
+    }
+
+    /* Button styling */
+    .dropdown-btn {
+        cursor: pointer;
+        color: #c8facc;
+        font-weight: 500;
+        padding: 10px 15px; 
+        border-radius: 5px;
+        transition: 0.3s;
+        display: inline-block;
+    }
+
+    .dropdown-content {
+        display: none;
+        position: absolute;
+        background-color: #1a1a1a; 
+        min-width: 200px;
+        box-shadow: 0px 8px 16px rgba(0,0,0,0.9), 0 0 15px rgba(0,255,127,0.3);
+        z-index: 10000;
+        border-radius: 8px;
+        border: 1px solid #00ff7f;
+        top: 100%; 
+        left: 0; 
+        overflow: hidden;
+        margin-top: 0; 
+    }
+
+    .dropdown::after {
+        content: "";
+        position: absolute;
+        width: 100%;
+        height: 20px; 
+        bottom: -20px;
+        left: 0;
+    }
+
+    .dropdown-content a {
+        color: #c8facc !important;
+        padding: 14px 18px !important;
+        text-decoration: none;
+        display: block !important;
+        border-bottom: 1px solid rgba(0,255,127,0.1);
+        transition: 0.2s;
+        font-size: 0.95rem;
+        text-align: left;
+    }
+
+    .dropdown-content a:hover {
+        background-color: #00ff7f;
+        color: #000 !important; 
+    }
+
+    .dropdown:hover .dropdown-content {
+        display: block;
+    }
+
+    .dropdown-btn:hover {
+        background: rgba(0, 255, 127, 0.1);
+        color: #00ff7f;
+    }
+
+    .profile-tab {
+        color: #d4af37 !important;
+        font-weight: bold;
+    }
+</style>
+</head>
+<body>
+<header>
+    <div class="logo">
+        <img src="/images/Logopalaronijuan.png" alt="Palaro Ni Juan">
+        <h1><a href="/">Palaro Ni Juan</a></h1>
+    </div>
+<nav>
+
+<% if (user && (user.is_admin === 1 || user.is_coadmin === 1)) { %>
+    <a href="/admin/support" style="color:#ff9800; font-weight:bold;">
+        💬 Support Panel
+    </a>
+<% } %>
+
+    <% if (user) { %>
+        <% if (Number(user.is_controller) === 1) { %>
+            <a href="/controller">Controller Panel</a>
+            <a href="/profile" class="profile-tab">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#00d4ff" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"></path><circle cx="12" cy="7" r="4"></circle><circle cx="12" cy="7" r="2" fill="#bd00ff"></circle></svg>
+                Profile
+            </a>
+            <a href="/logout">Logout</a>
+        <% } else { %>
+            <a href="/dashboard">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#00d4ff" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                Dashboard
+            </a>
+
+            <% if (user.is_coadmin === 1) { %>
+                <a href="/coadmin" style="color: #ff9800; font-weight: bold;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ff9800" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 00-3-3.87" stroke="#bd00ff"></path><path d="M16 3.13a4 4 0 010 7.75" stroke="#bd00ff"></path></svg>
+                    Co-admin Panel
+                </a>
+            <% } %>
+
+            <% if (Number(user.is_agent) === 1) { %>
+                <a href="/agent" style="color: #00ff7f; font-weight: bold;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#00ff7f" stroke-width="2"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><polyline points="17 11 19 13 23 9" stroke="#bd00ff"></polyline></svg>
+                    Agent Panel
+                </a>
+            <% } %>
+
+            <div class="dropdown">
+                <span class="dropdown-btn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#00d4ff" stroke-width="2"><path d="M6 12h4M8 10v4"></path><path d="M3 7l2 10h14l2-10H3z"></path><path d="M15 11h.01M18 13h.01" stroke="#bd00ff"></path></svg>
+                    Games <small>▼</small>
+                </span>
+                <div class="dropdown-content">
+                    <a href="/sabong" class="sabong-link-inner">Online Sabong 🐓</a>
+                    <a href="/sakla">Online Sakla 🃏</a>
+                    <a href="/bet">Online Draw 💰</a>
+                    <a href="/twodigitball">Two-Digit Ball 🎱</a>
+                    <a href="/slot-machine">Slot Machine 🎰</a>
+                    <a href="/onlinehorserace">Horse Race 🐴</a>
+                </div>
+                </div>
+            </div>
+
+            <a href="/topup">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#00d4ff" stroke-width="2"><path d="M12 5v14M5 12h14"></path><path d="M22 12l-4-4-4 4" stroke="#bd00ff"></path><path d="M18 8v12" stroke="#bd00ff"></path></svg>
+                Top-up
+            </a>
+            <a href="/withdraw">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#00d4ff" stroke-width="2"><path d="M12 19V5M19 12H5"></path><path d="M2 12l4 4 4-4" stroke="#bd00ff"></path><path d="M6 16V4" stroke="#bd00ff"></path></svg>
+                Withdraw
+            </a>
+            
+            <a href="/profile" class="profile-tab">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#00d4ff" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"></path><circle cx="12" cy="7" r="4"></circle><circle cx="12" cy="7" r="2" fill="#bd00ff"></circle></svg>
+                Profile
+            </a>
+
+            <% if (user.is_admin) { %>
+                <a href="/admin">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#00d4ff" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><path d="M12 15a3 3 0 100-6 3 3 0 000 6z" fill="#bd00ff"></path></svg>
+                    Admin
+                </a>
+            <% } %>
+            <a href="/logout">Logout</a>
+        <% } %>
+    <% } else { %>
+        <a href="/login">Login</a>
+        <a href="/register">Register</a>
+    <% } %>
+</nav>
+</header>
+
+<main>
+    <% if (messages && messages.error) { %>
+        <div class="flash error"><%= messages.error %></div>
+    <% } %>
+    <% if (messages && messages.success) { %>
+        <div class="flash success"><%= messages.success %></div>
+    <% } %>
+    <div class="content">
+        <%- body %>
+    </div>
+</main>
+
+<footer>
+    <small>Palaro Ni Juan &copy; 2026 - Timezone: Asia/Manila</small>
+</footer>
+
+<% if (user) { %>
+<!-- FLOATING CUSTOMER SUPPORT -->
+<div id="support-chat-button">
+    💬
+</div>
+
+<div id="support-chat-box">
+    <div id="support-header">
+        <span>Customer Support</span>
+        <button id="close-support-chat">✖</button>
+    </div>
+    <div id="support-messages">
+        <div class="support-system-msg">
+            Welcome to Customer Support
+        </div>
+    </div>
+    <form id="support-form">
+        <input
+            type="text"
+            id="support-input"
+            placeholder="Type your message..."
+            required
+        >
+        <button type="submit">
+            Send
+        </button>
+    </form>
+</div>
+
+<script>
+const supportBtn = document.getElementById('support-chat-button');
+const supportBox = document.getElementById('support-chat-box');
+const closeSupport = document.getElementById('close-support-chat');
+const supportForm = document.getElementById('support-form');
+const supportInput = document.getElementById('support-input');
+const supportMessages = document.getElementById('support-messages');
+
+supportBtn.onclick = () => {
+    supportBox.style.display = 'flex';
+    loadSupportMessages();
+};
+
+closeSupport.onclick = () => {
+    supportBox.style.display = 'none';
+};
+
+async function loadSupportMessages(){
+    try{
+        const res = await fetch('/customer-service/messages');
+        const messages = await res.json();
+        supportMessages.innerHTML = '';
+        messages.forEach(msg => {
+            const div = document.createElement('div');
+            div.className = msg.sender === 'admin' ? 'support-admin' : 'support-user';
+            let name;
+            if (msg.sender === 'admin') {
+                name = 'Admin';
+            } else {
+                name = msg.user_name || 'Player';
+            }
+            div.innerHTML = `<strong>${name}</strong>: ${msg.message}`;
+            supportMessages.appendChild(div);
+        });
+        supportMessages.scrollTop = supportMessages.scrollHeight;
+    }catch(err){
+        console.log(err);
+    }
+}
+
+supportForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const message = supportInput.value.trim();
+    if(!message) return;
+    await fetch('/customer-service/send', {
+        method:'POST',
+        headers:{ 'Content-Type':'application/json' },
+        body:JSON.stringify({ message })
+    });
+    supportInput.value = '';
+    loadSupportMessages();
+});
+
+setInterval(loadSupportMessages, 3000);
+</script>
+<% } %>
+
+</body>
+</html>

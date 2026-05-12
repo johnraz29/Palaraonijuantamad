@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="/dashboard.css" />
+    <style>
+        /* Jackpot styling */
+        #jackpot-container {
+            text-align: center;
+            margin: 30px 0;
+            font-family: 'Arial Black', sans-serif;
+        }
+
+        #jackpot-label {
+            font-size: 1.5em;
+            color: #ffdd00;
+            text-shadow: 2px 2px 5px black;
+        }
+
+        #jackpot-amount {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #ff4500;
+            text-shadow: 2px 2px 10px black;
+            animation: glow 1.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 2px 2px 10px #ff4500, 0 0 20px #ff4500; }
+            to { text-shadow: 2px 2px 20px #ff6347, 0 0 30px #ff6347; }
+        }
+
+        /* Result Boxes Styling */
+        .results-wrapper {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .result-box {
+            background: #222;
+            color: #fff;
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid #ffdd00;
+            min-width: 250px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+
+        .result-box h2 {
+            margin: 0;
+            font-size: 1.2em;
+            color: #ffdd00;
+        }
+
+        .result-box h3 {
+            font-size: 1.8em;
+            margin: 10px 0;
+            letter-spacing: 2px;
+        }
+
+        .tab-section { display: none; }
+        .tab-section.active { display: block; }
+    </style>
+</head>
+<body>
+<header>
+    <div class="logo">
+        <img src="/images/dashboard.png" alt="Logo">
+        <h1>My Dashboard</h1>
+    </div>
+    <div class="user-info">
+        <p>Hello, <strong><%= user.name %></strong> — Balance: 
+        <span class="balance">₱<%= (user.balance||0).toFixed(2) %></span></p>
+    </div>
+</header>
+
+<div id="jackpot-container">
+    <div id="jackpot-label">🎉 Jackpot Prize 🎉</div>
+    <div id="jackpot-amount">₱<%= (jackpot || 0).toFixed(2) %></div>
+</div>
+
+<div class="results-wrapper">
+    <div class="result-box">
+        <h2>🎯 Latest 6-Digit Result</h2>
+        <h3><%= lottoResult %></h3>
+    </div>
+
+    <div class="result-box">
+        <h2>🎲 Latest Two-Digit Result</h2>
+        <h3><%= twoDigitResult %></h3>
+    </div>
+</div>
+
+<nav class="dashboard-tabs">
+    <button class="tab-btn active" data-target="dashboard-section">Dashboard</button>
+    <button class="tab-btn" data-target="bets-section">Your Bets</button>
+    <button class="tab-btn" data-target="transactions-section">Transactions</button>
+    <% if (user && Number(user.is_controller) === 1) { %>
+        <button class="tab-btn" data-target="controller-section">Controller</button>
+    <% } %>
+</nav>
+
+<main>
+    <section id="dashboard-section" class="tab-section active">
+        <h2>Dashboard Overview</h2>
+        <p>Welcome back, <strong><%= user.name %></strong>! Here's a quick look at your account.</p>
+        <% if (userWon) { %>
+            <div style="background:gold; color:black; padding:10px; border-radius:5px; text-align:center; font-weight:bold; margin-bottom:10px;">
+                🎊 CONGRATULATIONS! YOU WON IN THE RECENT DRAW! 🎊
+            </div>
+        <% } %>
+    </section>
+
+    <section id="bets-section" class="tab-section">
+        <h2>Your Bets</h2>
+        <table>
+            <thead>
+                <tr><th>Game</th><th>Numbers</th><th>Amount</th><th>Status</th><th>When</th></tr>
+            </thead>
+            <tbody>
+            <% if (bets && bets.length) { bets.forEach(b=>{ %>
+                <tr>
+                    <td><%= b.game_type === 'lotto' ? '6-Digit' : 'Two-Digit' %></td>
+                    <td><%= b.numbers %></td>
+                    <td>₱<%= b.amount %></td>
+                  <td class="status-cell <%= b.status %>">
+    <%= b.status.toUpperCase() %>
+</td>
+                    <td><%= b.created_at %></td>
+                </tr>
+            <% }) } else { %>
+                <tr><td colspan="5">No bets yet</td></tr>
+            <% } %>
+            </tbody>
+        </table>
+    </section>
+
+    <section id="transactions-section" class="tab-section">
+        <h2>Transactions</h2>
+        <table>
+            <thead>
+                <tr><th>Type</th><th>Amount</th><th>Status</th><th>Ref</th><th>When</th></tr>
+            </thead>
+            <tbody>
+            <% if (txs && txs.length) { txs.forEach(t=>{ %>
+                <tr>
+                    <td><%= t.type.toUpperCase() %></td>
+                    <td>₱<%= t.amount.toFixed(2) %></td>
+                    <td><%= t.status %></td>
+                    <td><%= t.reference %></td>
+                    <td><%= t.created_at %></td>
+                </tr>
+            <% }) } else { %>
+                <tr><td colspan="5">No transactions</td></tr>
+            <% } %>
+            </tbody>
+        </table>
+    </section>
+
+    <% if (user && Number(user.is_controller) === 1) { %>
+    <section id="controller-section" class="tab-section">
+        <h2>🎮 Controller Panel</h2>
+        <p>Managed via the Controller page. <a href="/controller" style="color:yellow;">Click here to go to Controller Tools</a>.</p>
+    </section>
+    <% } %>
+</main>
+
+<footer>
+    <p>&copy; <%= new Date().getFullYear() %> Palaro ni Juan. All rights reserved.</p>
+</footer>
+
+<script>
+const tabs = document.querySelectorAll('.tab-btn');
+const sections = document.querySelectorAll('.tab-section');
+
+tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+        tabs.forEach(t => t.classList.remove('active'));
+        sections.forEach(s => s.classList.remove('active'));
+
+        tab.classList.add('active');
+        const target = document.getElementById(tab.dataset.target);
+        if (target) {
+            target.classList.add('active');
+        }
+    });
+});
+</script>
+</body>
+</html>

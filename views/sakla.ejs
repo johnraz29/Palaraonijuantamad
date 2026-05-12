@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online Sakla | <%= user.name %></title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/onlinesakla.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <style>
+        :root {
+            --gold: #d4af37;
+            --felt-green: #064e3b;
+        }
+
+        /* Wood Table Effect */
+        .game-container {
+            background: radial-gradient(circle, #065f46 0%, #064e3b 100%);
+            border: 12px solid #271b13;
+            box-shadow: inset 0 0 100px rgba(0,0,0,0.5), 0 20px 50px rgba(0,0,0,0.8);
+            position: relative;
+        }
+
+        /* Original Card Look */
+        .sakla-card {
+            width: 150px;
+            height: 220px;
+            background: #fdfbf7;
+            border-radius: 12px;
+            position: relative;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+            border: 1px solid #ddd;
+            color: #1a1a1a;
+            overflow: hidden;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .sakla-card::before {
+            content: '';
+            position: absolute;
+            top: 8px; left: 8px; right: 8px; bottom: 8px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            pointer-events: none;
+        }
+
+        .card-value {
+            font-family: 'Georgia', serif;
+            font-weight: bold;
+            font-size: 1.8rem;
+            position: absolute;
+            top: 12px;
+            left: 15px;
+        }
+
+        .card-suit {
+            font-size: 5.5rem;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.1));
+        }
+
+        /* Shuffle Animation */
+        .shuffling {
+            animation: shuffle-anim 0.2s infinite alternate;
+        }
+
+        @keyframes shuffle-anim {
+            from { transform: translateY(0) rotate(0deg) scale(1); }
+            to { transform: translateY(-15px) rotate(3deg) scale(1.05); }
+        }
+
+        /* Custom Scrollbar for History */
+        #history-box::-webkit-scrollbar { width: 4px; }
+        #history-box::-webkit-scrollbar-thumb { background: #444; border-radius: 10px; }
+    </style>
+</head>
+<body class="bg-neutral-950 text-white font-sans">
+
+    <!-- Navbar -->
+    <nav class="bg-zinc-900 border-b border-yellow-600/50 p-4 sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto flex justify-between items-center">
+            <h1 class="text-xl font-black text-yellow-500 italic tracking-widest">ONLINE SAKLA</h1>
+            <div class="flex items-center gap-4">
+                <div class="text-right">
+                    <p class="text-[10px] text-gray-400 uppercase">My Balance</p>
+                    <p id="display-balance" class="text-lg font-mono font-bold text-green-400">₱<%= user.balance.toLocaleString() %></p>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-6xl mx-auto p-4 md:p-8">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            <!-- Game Board -->
+            <div class="lg:col-span-2 space-y-6">
+                <div class="game-container rounded-[50px] p-10 shadow-2xl relative overflow-hidden">
+                    <div id="game-message" class="absolute top-6 left-1/2 -translate-x-1/2 bg-black/80 border border-yellow-600/50 px-8 py-2 rounded-full text-xs text-yellow-400 font-bold uppercase tracking-[0.2em] z-10">
+                        Pumili ng taya...
+                    </div>
+
+                    <div class="flex justify-center items-center py-12">
+                        <!-- Main Card Display -->
+                        <div id="main-card" class="sakla-card flex flex-col items-center justify-center bg-[#fdfbf7]">
+                            <div id="card-content" class="flex flex-col items-center">
+                                <span class="text-6xl mb-2">🃏</span>
+                                <span class="text-xs font-black text-zinc-400 uppercase tracking-widest">SAKLA</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Betting Section -->
+                <div class="bg-zinc-900 rounded-3xl p-6 border border-zinc-800 shadow-xl">
+                    <div class="flex flex-col md:flex-row gap-4 items-center mb-6">
+                        <div class="w-full">
+                            <label class="text-xs font-bold text-gray-500 uppercase ml-2">Taya (Amount)</label>
+                            <input type="number" id="bet-amount" value="5" min="5" class="w-full bg-black border border-zinc-700 rounded-xl px-4 py-4 text-yellow-500 text-xl font-mono font-bold focus:outline-none focus:border-yellow-600 transition-all" placeholder="Min ₱5">
+                        </div>
+                    </div>
+
+                    <p class="text-[10px] font-bold text-gray-400 mb-4 uppercase text-center tracking-widest">Pumili ng Baraha (Choice)</p>
+                    <div class="grid grid-cols-3 md:grid-cols-5 gap-3">
+                        <% 
+                            const cards = [
+                                { name: 'Alas', icon: '🏆' },
+                                { name: 'Tres', icon: '⚔️' },
+                                { name: 'Sota', icon: '🛡️' },
+                                { name: 'Kabayo', icon: '🐴' },
+                                { name: 'Hari', icon: '👑' }
+                            ];
+                            cards.forEach(card => { 
+                        %>
+                            <button onclick="placeBet('<%= card.name %>')" class="bet-btn group bg-zinc-800 hover:bg-zinc-700 p-4 rounded-2xl border-b-4 border-black transition-all active:translate-y-1">
+                                <span class="block text-2xl mb-1"><%= card.icon %></span>
+                                <span class="block text-xs font-black text-white group-hover:text-yellow-500"><%= card.name %></span>
+                                <span class="text-[9px] text-gray-500 font-bold uppercase">4x Payout</span>
+                            </button>
+                        <% }) %>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar History -->
+            <div class="space-y-6">
+                <div class="bg-zinc-900 rounded-3xl p-6 border border-zinc-800">
+                    <h3 class="text-sm font-bold text-gray-400 mb-4 flex items-center gap-2 uppercase tracking-tighter">
+                        <span class="w-2 h-2 bg-yellow-500 rounded-full animate-ping"></span> Live Results
+                    </h3>
+                    <div id="history-box" class="space-y-3 max-h-[450px] overflow-y-auto pr-2">
+                        <!-- History injected here -->
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        const cardStyles = {
+            'Alas': { icon: '🏆', color: 'text-yellow-600', val: '1' },
+            'Tres': { icon: '⚔️', color: 'text-zinc-700', val: '3' },
+            'Sota': { icon: '🛡️', color: 'text-blue-700', val: '10' },
+            'Kabayo': { icon: '🐴', color: 'text-red-700', val: '11' },
+            'Hari': { icon: '👑', color: 'text-yellow-800', val: '12' }
+        };
+
+        async function placeBet(choice) {
+            const amountInput = document.getElementById('bet-amount');
+            const amount = Number(amountInput.value);
+            const messageEl = document.getElementById('game-message');
+            const cardEl = document.getElementById('main-card');
+            
+            if (!amount || amount < 5) {
+                alert("Minimum bet is ₱5.");
+                return;
+            }
+
+            // UI Feedback
+            const buttons = document.querySelectorAll('.bet-btn');
+            buttons.forEach(b => b.disabled = true);
+            
+            messageEl.innerText = "BUMOBOLA NA...";
+            messageEl.classList.add('animate-pulse');
+            cardEl.classList.add('shuffling');
+            cardEl.innerHTML = `<div class="flex flex-col items-center"><span class="text-6xl mb-2">❓</span></div>`;
+
+            try {
+                const response = await fetch('/sakla/bet', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ amount: amount, choice: choice })
+                });
+
+                const data = await response.json();
+
+                if (data.error) {
+                    alert(data.error);
+                    location.reload();
+                    return;
+                }
+
+                // Wait for the "shuffle" feel
+                setTimeout(() => {
+                    cardEl.classList.remove('shuffling');
+                    cardEl.classList.add('animate__animated', 'animate__flipInY');
+                    
+                    const style = cardStyles[data.winningCard];
+                    
+                    // Render the original card look
+                    cardEl.innerHTML = `
+                        <div class="card-value ${style.color}">${style.val}</div>
+                        <div class="card-suit">${style.icon}</div>
+                        <div class="absolute bottom-3 right-3 text-[9px] font-black opacity-30 uppercase">${data.winningCard}</div>
+                    `;
+
+                    if (data.result === 'win') {
+                        messageEl.innerText = "🎉 PANALO KA!";
+                        messageEl.classList.replace('text-yellow-400', 'text-green-400');
+                    } else {
+                        messageEl.innerText = "❌ TALO! TRY AGAIN.";
+                        messageEl.classList.replace('text-yellow-400', 'text-red-400');
+                    }
+
+                    addToHistory(data.winningCard, data.result, amount);
+                    
+                    // Refresh balance and reset after delay
+                    setTimeout(() => {
+                        window.location.reload(); 
+                    }, 3500);
+
+                }, 1500);
+
+            } catch (err) {
+                console.error(err);
+                alert("Connection Error.");
+                location.reload();
+            }
+        }
+
+        function addToHistory(card, result, amount) {
+            const box = document.getElementById('history-box');
+            const div = document.createElement('div');
+            const style = cardStyles[card];
+            div.className = `p-4 rounded-2xl flex justify-between items-center border-l-4 animate__animated animate__fadeInDown ${result === 'win' ? 'bg-green-900/20 border-green-500' : 'bg-zinc-800/50 border-zinc-600'}`;
+            div.innerHTML = `
+                <div class="flex items-center gap-3">
+                    <span class="text-2xl">${style.icon}</span>
+                    <div>
+                        <p class="text-xs font-black uppercase">${card}</p>
+                        <p class="text-[10px] text-gray-500">Taya: ₱${amount}</p>
+                    </div>
+                </div>
+                <span class="text-[10px] font-black ${result === 'win' ? 'text-green-400' : 'text-zinc-500'}">${result.toUpperCase()}</span>
+            `;
+            box.prepend(div);
+        }
+    </script>
+</body>
+</html>

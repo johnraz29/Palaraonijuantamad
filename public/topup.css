@@ -1,0 +1,139 @@
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Segoe UI, Arial, sans-serif;
+}
+
+body{
+  min-height:100vh; /* allow body to grow if content is taller */
+  color:white;
+  overflow-y:auto; /* enable vertical scroll if needed */
+  background:#0a0a0a;
+}
+
+/* COOL BACKGROUND */
+
+.background{
+position:fixed;
+width:100%;
+height:100%;
+background:
+radial-gradient(circle at top,#00ff88 0%,transparent 40%),
+radial-gradient(circle at bottom,#003d1f 0%,transparent 40%),
+#0a0a0a;
+z-index:-1;
+}
+
+/* HEADER */
+
+.top-header{
+width:100%;
+padding:20px 40px;
+background:#111;
+border-bottom:2px solid #00ff88;
+}
+
+.logo{
+display:flex;
+align-items:center;
+gap:12px;
+}
+
+.logo img{
+width:40px;
+}
+
+.logo h1{
+color:#00ff88;
+font-size:22px;
+letter-spacing:1px;
+}
+
+/* CENTER CONTAINER */
+.container{
+  display:flex;
+  justify-content:center;
+  align-items:flex-start; /* top align so card doesn't get cut */
+  padding:40px 20px;      /* add padding so card isn't stuck to top */
+}
+
+/* CARD */
+
+.topup-card{
+background:rgba(20,20,20,0.95);
+padding:40px;
+border-radius:12px;
+width:420px;
+box-shadow:0 0 25px rgba(0,255,120,0.2);
+border:1px solid #00ff88;
+}
+
+.topup-card h2{
+color:#00ff88;
+margin-bottom:15px;
+text-align:center;
+}
+
+.description{
+font-size:14px;
+color:#ccc;
+margin-bottom:25px;
+text-align:center;
+}
+
+/* FORM */
+
+.form-group{
+margin-bottom:20px;
+display:flex;
+flex-direction:column;
+}
+
+label{
+margin-bottom:6px;
+font-size:14px;
+color:#aaa;
+}
+
+input{
+padding:12px;
+border-radius:6px;
+border:1px solid #333;
+background:#111;
+color:white;
+font-size:15px;
+outline:none;
+transition:0.2s;
+}
+
+input:focus{
+border-color:#00ff88;
+box-shadow:0 0 5px #00ff88;
+}
+
+small{
+margin-top:5px;
+font-size:12px;
+color:#777;
+}
+
+/* BUTTON */
+
+.topup-btn{
+width:100%;
+padding:14px;
+border:none;
+border-radius:8px;
+background:linear-gradient(135deg,#00ff88,#00aa55);
+color:black;
+font-weight:bold;
+font-size:16px;
+cursor:pointer;
+transition:0.25s;
+}
+
+.topup-btn:hover{
+transform:scale(1.04);
+box-shadow:0 0 12px #00ff88;
+}

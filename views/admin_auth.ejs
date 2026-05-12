@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Authentication</title>
+</head>
+<body>
+    <h1>Admin Panel Access</h1>
+
+    <% if (messages.error) { %>
+        <p style="color:red;"><%= messages.error %></p>
+    <% } %>
+
+    <% if (messages.success) { %>
+        <p style="color:green;"><%= messages.success %></p>
+    <% } %>
+
+    <form action="/admin-auth" method="POST">
+        <label for="admin_password">Enter Admin Password:</label>
+        <input type="password" name="admin_password" id="admin_password" required>
+        <button type="submit">Verify</button>
+    </form>
+</body>
+</html>

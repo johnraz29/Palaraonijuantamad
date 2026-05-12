@@ -1,0 +1,22 @@
+<div class="container mt-5">
+    <div class="card shadow border-0">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">⚙️ Slot Machine Configuration</h4>
+        </div>
+        <div class="card-body">
+            <form action="/admin/slot/settings" method="POST">
+                <div class="mb-4 text-center">
+                    <label class="form-label fw-bold d-block">Win Percentage (%)</label>
+                    <h1 class="text-success display-4" id="rangeValue"><%= currentRate %>%</h1>
+                    <input type="range" name="win_rate" class="form-range" min="1" max="90" step="1" 
+                           value="<%= currentRate %>" id="winRange" oninput="document.getElementById('rangeValue').innerText = this.value + '%'">
+                    <p class="text-muted small">Paalala: Mas mababang percent, mas malaki ang kita ng House Ledger.</p>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Save Configuration</button>
+            </form>
+        </div>
+    </div>
+    <div class="mt-3">
+        <a href="/admin" class="text-muted"><i class="fas fa-arrow-left"></i> Back to Admin Dashboard</a>
+    </div>
+</div>

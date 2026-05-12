@@ -1,0 +1,120 @@
+/* Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #0f0f0f, #1a1a1a, #00ff7f);
+    background-size: 400% 400%;
+    animation: gradientBG 15s ease infinite;
+    color: #c8facc;
+}
+
+@keyframes gradientBG {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* Center container */
+.login-container {
+    width: 100%;
+    max-width: 400px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.login-box {
+    background-color: #1f1f1f;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 0 25px rgba(0, 255, 127, 0.4);
+    border: 1px solid #00ff7f;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.login-box .logo img {
+    width: 60px;
+    margin-bottom: 15px;
+}
+
+.login-box h2 {
+    color: #00ff7f;
+    margin-bottom: 30px;
+    font-size: 2em;
+    text-align: center;
+}
+
+form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+label {
+    display: flex;
+    flex-direction: column;
+    font-size: 0.95em;
+    color: #c8facc;
+}
+
+input {
+    padding: 12px;
+    margin-top: 5px;
+    border: 1px solid #00ff7f;
+    border-radius: 6px;
+    background-color: #121212;
+    color: #c8facc;
+    transition: 0.3s;
+}
+
+input:focus {
+    outline: none;
+    border-color: #00ff7f;
+    box-shadow: 0 0 12px #00ff7f;
+}
+
+button {
+    padding: 14px;
+    background-color: #00ff7f;
+    color: #121212;
+    font-weight: bold;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+button:hover {
+    background-color: #00cc66;
+    box-shadow: 0 0 12px #00ff7f;
+}
+
+footer {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 0.85em;
+    color: #a0a0a0;
+}
+
+footer a {
+    color: #00ff7f;
+    text-decoration: none;
+}
+
+footer a:hover {
+    text-decoration: underline;
+}

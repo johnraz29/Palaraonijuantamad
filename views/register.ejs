@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <link rel="stylesheet" href="/register.css" />
+</head>
+<body>
+    <div class="register-container">
+        <section class="register-box">
+            <div class="logo">
+                <img src="/images/register.png" alt="Logo">
+            </div>
+
+            <h2>Create Account</h2>
+
+            <% if (messages.error) { %>
+                <div style="color: white; background-color: #ff4d4d; padding: 10px; margin-bottom: 15px; border-radius: 5px; text-align: center;">
+                    <%= messages.error %>
+                </div>
+            <% } %>
+
+            <form method="post" action="/register">
+                <label>
+                    <input type="hidden" name="ref_code" value="<%= typeof ref !== 'undefined' ? ref : '' %>">
+                </label>
+                <label>
+                    Full Name
+                    <input name="name" type="text" placeholder="Juan Dela Cruz" required />
+                </label>
+                <label>
+                    Phone Number
+                    <input name="phone" type="text" placeholder="09123456789" required />
+                </label>
+                <label>
+                    Email
+                    <input name="email" type="email" placeholder="email@example.com" required />
+                </label>
+                <label>
+                    Password
+                    <input name="password" type="password" placeholder="Min. 6 characters" required />
+                </label>
+                
+                <button type="submit">Register Now</button>
+            </form>
+
+            <div style="margin-top: 15px; text-align: center;">
+                <p style="color: gray;">May account ka na? <a href="/login" style="color: #007bff; text-decoration: none;">Login dito</a></p>
+            </div>
+
+            <footer>
+                <p>&copy; <%= new Date().getFullYear() %> Lottery App. All rights reserved.</p>
+            </footer>
+        </section>
+    </div>
+</body>
+</html>

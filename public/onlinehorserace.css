@@ -1,0 +1,144 @@
+/* onlinehorserace.css */
+
+/* Casino Background Style */
+.casino-bg {
+    background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
+                url('https://images.unsplash.com/photo-1518931161241-945763567702?q=80&w=2000') no-repeat center center;
+    background-size: cover;
+    min-height: 100vh;
+}
+
+/* Card Styling */
+.horse-race-card {
+    background: rgba(20, 20, 20, 0.9) !important;
+    border: 2px solid #444 !important;
+    border-radius: 15px;
+    max-width: 800px;
+    margin: auto;
+}
+
+.race-header {
+    background: #111;
+    padding: 15px 25px;
+    border-bottom: 3px solid #ffc107;
+    border-radius: 15px 15px 0 0;
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.balance-pill {
+    background: #222;
+    padding: 5px 15px;
+    border-radius: 20px;
+    border: 1px solid #444;
+}
+
+/* Track Styling - Compact & Clean */
+#race-track {
+    background: #2e7d32; /* Grass Green */
+    border: 4px solid #1b5e20;
+    border-radius: 8px;
+    position: relative;
+    padding: 10px 0;
+    margin-bottom: 20px;
+}
+
+.horse-lane {
+    height: 50px;
+    border-bottom: 1px dashed rgba(255,255,255,0.2);
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.lane-number {
+    width: 30px;
+    text-align: center;
+    color: rgba(255,255,255,0.5);
+    font-weight: bold;
+    font-size: 0.8rem;
+}
+
+/* Horse Styling - Maliit at Malinis */
+.horse {
+    position: absolute;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: left 3s ease-in-out;
+}
+
+.horse-img {
+    width: 40px; /* Mas maliit na horse icon */
+    height: auto;
+    filter: drop-shadow(0px 2px 2px rgba(0,0,0,0.5));
+    animation: run 0.4s infinite alternate;
+}
+
+.horse-label {
+    font-size: 0.6rem;
+    background: rgba(0,0,0,0.7);
+    padding: 2px 5px;
+    border-radius: 4px;
+    margin-top: -5px;
+}
+
+/* Betting Section - Pantay-pantay */
+.bet-grid {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.bet-btn {
+    flex: 1; /* Para pantay ang laki nila sa row */
+    height: 60px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: white;
+    transition: transform 0.2s, filter 0.2s;
+    box-shadow: 0 4px 0 rgba(0,0,0,0.3);
+}
+
+.bet-btn:hover { transform: translateY(-3px); filter: brightness(1.2); }
+.bet-btn:active { transform: translateY(2px); box-shadow: none; }
+
+/* Colors for Horses */
+.btn-h1 { background: #dc3545; }
+.btn-h2 { background: #007bff; }
+.btn-h3 { background: #28a745; }
+.btn-h4 { background: #17a2b8; }
+
+/* Status Alert */
+.alert-custom {
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+    margin-bottom: 15px;
+    font-weight: bold;
+    background: #333;
+    border: 1px solid #555;
+}
+
+/* Finish Line */
+.finish-line {
+    position: absolute;
+    right: 40px;
+    top: 0;
+    bottom: 0;
+    width: 15px;
+    background: repeating-linear-gradient(0deg, #fff 0 10px, #000 10px 20px);
+    opacity: 0.5;
+}
+
+@keyframes run {
+    from { transform: translateY(0); }
+    to { transform: translateY(-5px); }
+}

@@ -1,0 +1,193 @@
+/* General Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+    color: #c8facc;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header - Responsive */
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px; /* Reduced padding for mobile */
+    background-color: rgba(0,0,0,0.95); /* --- CHANGE: Mas solid na black para hindi kita ang likod --- */
+    border-bottom: 2px solid #00ff7f;
+    flex-wrap: wrap; /* Para mag-wrap sa mobile */
+    gap: 10px;
+
+    /* --- ADD THESE: Eto ang magpapadikit sa header --- */
+    position: sticky;  /* Padikit sa taas */
+    top: 0;           /* Idikit sa pinakataas */
+    z-index: 10000;   /* Napakataas na number para laging sa harap */
+    
+    /* Opsyonal: Lagyan ng blur effect para mas maganda */
+    -webkit-backdrop-filter: blur(5px);
+    backdrop-filter: blur(5px);
+}
+
+
+header .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+header .logo img {
+    width: 40px;
+    height: 40px;
+}
+
+header h1 {
+    font-size: 1.4em; /* Smaller font for mobile */
+    color: #00ff7f;
+}
+
+.user-info p {
+    font-size: 0.9em;
+}
+
+/* Tabs - Scrollable on mobile */
+.dashboard-tabs {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin: 15px 0;
+    padding: 0 10px;
+    overflow-x: auto; /* Nagiging scrollable pakanan pag maraming tabs sa mobile */
+    white-space: nowrap;
+}
+
+/* Hide scrollbar but keep functionality */
+.dashboard-tabs::-webkit-scrollbar {
+    display: none;
+}
+
+.tab-btn {
+    padding: 8px 15px;
+    border: none;
+    background-color: rgba(0,0,0,0.6);
+    color: #c8facc;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+    flex-shrink: 0; /* Para hindi mapitpit ang button */
+}
+
+.tab-btn:hover, .tab-btn.active {
+    background-color: #00ff7f;
+    color: #121212;
+}
+
+/* Tab Sections */
+.tab-section {
+    display: none;
+    padding: 20px;
+    background-color: rgba(0,0,0,0.5);
+    margin: 0 15px 20px; /* Smaller margins for mobile */
+    border-radius: 10px;
+    overflow-x: hidden; /* Iwas overflow sa container */
+}
+
+.tab-section.active {
+    display: block;
+}
+
+/* Container para sa responsive tables */
+.table-responsive {
+    width: 100%;
+    overflow-x: auto; /* Eto ang magpapa-scroll sa table pakanan */
+    margin-top: 15px;
+}
+
+/* Tables */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: rgba(0,0,0,0.6);
+    border-radius: 5px;
+    min-width: 600px; /* Pinipilit ang table na huwag mag-overlap ang text */
+}
+
+table th, table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #333;
+    font-size: 0.9em;
+}
+
+table th {
+    background-color: rgba(0,0,0,0.8);
+    color: #00ff7f;
+}
+
+table tr:nth-child(even) {
+    background-color: rgba(0,0,0,0.5);
+}
+
+/* Buttons inside table */
+table button {
+    padding: 6px 12px;
+    background-color: #00ff7f;
+    color: #121212;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.85em;
+}
+
+/* Admin Specific Buttons */
+.result-btn {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 10px 20px;
+    background-color: #00ff7f;
+    color: #121212;
+    text-decoration: none;
+    border-radius: 5px;
+    text-align: center;
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    padding: 20px;
+    background-color: rgba(0,0,0,0.7);
+    border-top: 2px solid #00ff7f;
+    color: #c8facc;
+    margin-top: auto; /* Push footer to bottom */
+}
+
+/* --- MEDIA QUERIES --- */
+
+@media (max-width: 600px) {
+    header {
+        justify-content: center;
+        text-align: center;
+        flex-direction: column;
+    }
+    
+    header h1 {
+        font-size: 1.2em;
+    }
+
+    .tab-section {
+        padding: 15px;
+        margin: 0 10px 20px;
+    }
+
+    .dashboard-tabs {
+        justify-content: flex-start; /* Aligned to left for scrolling */
+    }
+}

@@ -1,0 +1,145 @@
+:root {
+    --gold: #d4af37;
+    --gold-dark: #aa841e;
+    --bg-dark: #0a0a0a;
+    --card-bg: rgba(20, 20, 20, 0.95);
+    --border: #333;
+    --danger-red: #8b0000;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+
+body {
+    background: var(--bg-dark);
+    color: white;
+    min-height: 100vh;
+}
+
+/* --- BACKGROUND GLOW --- */
+.background {
+    position: fixed;
+    width: 100%; height: 100%;
+    background: radial-gradient(circle at top, #2c240d 0%, transparent 50%), #0a0a0a;
+    z-index: -1;
+}
+
+/* --- HEADER --- */
+.top-header {
+    width: 100%; padding: 20px 40px;
+    background: #111; border-bottom: 2px solid var(--gold);
+}
+.logo { display: flex; align-items: center; gap: 12px; }
+.logo img { width: 40px; }
+.logo h1 { color: var(--gold); font-size: 22px; text-transform: uppercase; }
+
+/* --- LAYOUT --- */
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 40px 20px;
+}
+
+.profile-layout {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 30px;
+}
+
+@media (max-width: 768px) {
+    .profile-layout { grid-template-columns: 1fr; }
+}
+
+/* --- CARDS --- */
+.profile-card {
+    background: var(--card-bg);
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    overflow: hidden;
+    margin-bottom: 25px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+.card-header {
+    background: #1a1a1a;
+    padding: 15px 20px;
+    border-bottom: 1px solid var(--gold-dark);
+}
+
+/* New Danger Header Style */
+.danger-header {
+    border-bottom: 1px solid var(--danger-red) !important;
+}
+
+.card-header h5 { color: var(--gold); text-transform: uppercase; font-size: 14px; letter-spacing: 1px; }
+
+.card-body { padding: 25px; }
+
+/* --- SIDEBAR SPECIALS --- */
+.avatar-wrapper { margin-bottom: 20px; }
+.profile-avatar {
+    border: 3px solid var(--gold);
+    border-radius: 50%;
+    padding: 5px;
+    box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+}
+.user-name { color: white; margin-bottom: 5px; }
+.user-email { color: #888; font-size: 14px; margin-bottom: 20px; }
+
+.balance-box {
+    background: rgba(212, 175, 55, 0.1);
+    padding: 20px;
+    border-radius: 10px;
+    border: 1px dashed var(--gold);
+}
+.balance-box small { color: var(--gold); display: block; font-size: 10px; margin-bottom: 5px; }
+.balance-amount { font-size: 24px; font-weight: bold; color: white; }
+
+/* --- FORMS --- */
+.form-group { margin-bottom: 20px; display: flex; flex-direction: column; text-align: left; }
+label { font-size: 12px; color: #aaa; margin-bottom: 8px; text-transform: uppercase; }
+
+/* New Label Danger Style */
+.label-danger {
+    color: #ff4d4d !important;
+    font-weight: bold;
+}
+
+input {
+    padding: 12px;
+    background: #000;
+    border: 1px solid #333;
+    border-radius: 6px;
+    color: white;
+    outline: none;
+    transition: 0.2s;
+}
+input:focus { border-color: var(--gold); box-shadow: 0 0 8px rgba(212, 175, 55, 0.2); }
+
+/* --- BUTTONS --- */
+.btn-gold, .btn-info, .btn-danger {
+    width: 100%; padding: 12px; border: none; border-radius: 6px;
+    font-weight: bold; cursor: pointer; text-transform: uppercase; transition: 0.3s;
+}
+.btn-gold { background: linear-gradient(135deg, var(--gold), var(--gold-dark)); color: black; }
+.btn-info { background: #222; color: var(--gold); border: 1px solid var(--gold) !important; }
+.btn-danger { background: linear-gradient(135deg, #cc2b2b, var(--danger-red)); color: white; }
+
+.btn-gold:hover, .btn-info:hover, .btn-danger:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    filter: brightness(1.1);
+}
+
+/* --- ALERTS --- */
+.alert-container { margin-bottom: 20px; }
+.alert {
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    text-align: center;
+    border: 1px solid transparent;
+}
+.alert-success { background: rgba(0, 255, 136, 0.1); border-color: #00ff88; color: #00ff88; }
+.alert-danger { background: rgba(255, 0, 0, 0.1); border-color: #ff0000; color: #ff0000; }
+
+footer { text-align: center; padding: 40px; color: #444; font-size: 12px; }

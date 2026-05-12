@@ -1,0 +1,95 @@
+<link rel="stylesheet" href="/coadmin.css">
+
+<div class="container mt-5">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h2><i class="fas fa-user-shield text-primary"></i> Coadmin Dashboard</h2>
+            <p class="text-muted">Manage and approve withdrawal requests from players.</p>
+        </div>
+        <div class="col-md-4 text-end">
+            <div class="card bg-light border-0 shadow-sm p-3">
+                <small class="text-uppercase fw-bold text-muted">Active Coadmin</small>
+                <h5 class="mb-0 text-dark"><%= user.name %></h5>
+            </div>
+        </div>
+    </div>
+
+    <hr>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-white py-3">
+            <h5 class="mb-0 fw-bold"><i class="fas fa-hand-holding-usd me-2 text-success"></i> Pending Withdrawals</h5>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-4">Date & Time</th>
+                            <th>Player Name</th>
+                            <th>GCash Number</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                            <th class="text-center">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% if (withdrawals && withdrawals.length > 0) { %>
+                            <% withdrawals.forEach(tx => { %>
+                                <tr>
+                                    <td class="ps-4">
+                                        <small class="text-muted d-block">
+                                            <%= new Date(tx.created_at).toLocaleDateString() %>
+                                        </small>
+                                        <small class="fw-bold">
+                                            <%= new Date(tx.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) %>
+                                        </small>
+                                    </td>
+                                    <td>
+                                        <span class="fw-bold"><%= tx.user_name %></span>
+                                    </td>
+                                    <td>
+                                        <code class="text-primary fs-6"><%= tx.reference %></code>
+                                    </td>
+                                    <td>
+                                        <span class="fw-bold text-danger">₱<%= tx.amount.toLocaleString() %></span>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-warning text-dark px-3 rounded-pill text-uppercase">
+                                            <%= tx.status %>
+                                        </span>
+                                    </td>
+                                    <td class="text-center pe-4">
+                                        <form action="/coadmin/withdraw/approve" method="POST" onsubmit="return confirm('Sigurado ka bang nabayaran mo na ito sa GCash?')">
+                                            <input type="hidden" name="id" value="<%= tx.id %>">
+                                            <button type="submit" class="btn btn-success btn-sm px-3 shadow-sm rounded-pill">
+                                                <i class="fas fa-check-circle me-1"></i> Mark as Paid
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            <% }) %>
+                        <% } else { %>
+                            <tr>
+                                <td colspan="6" class="text-center py-5">
+                                    <div class="text-muted">
+                                        <i class="fas fa-info-circle fa-2x mb-3"></i>
+                                        <p>Walang pending na withdrawal sa ngayon.</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Back to Dashboard -->
+    <div class="mt-4">
+        <a href="/dashboard" class="text-decoration-none text-muted">
+            <i class="fas fa-arrow-left me-1"></i> Balik sa Dashboard
+        </a>
+    </div>
+</div>
+

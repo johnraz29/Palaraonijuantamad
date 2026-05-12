@@ -1,0 +1,77 @@
+<h2>Customer Support Inbox</h2>
+
+<div id="chat-container">
+
+    <div id="chat-list" style="float:left; width:30%; border-right:1px solid #333;">
+        <% users.forEach(u => { %>
+            <div onclick="loadChat('<%= u.user_id %>')"
+                 style="padding:10px; cursor:pointer; border-bottom:1px solid #222;">
+                <% users.forEach(u => { %>
+    <div onclick="loadChat('<%= u.user_id %>')"
+         style="padding:10px; cursor:pointer; border-bottom:1px solid #222;">
+        
+        👤 <%= u.user_name || 'Unknown User' %><br>
+        <small>ID: <%= u.user_id %></small>
+
+    </div>
+<% }) %>
+            </div>
+        <% }) %>
+    </div>
+
+    <div style="float:right; width:70%; padding:10px;">
+        <div id="messages" style="height:400px; overflow:auto; background:#111; padding:10px;"></div>
+
+        <form id="replyForm">
+            <input id="replyInput" placeholder="Type reply..." style="width:80%;">
+            <button>Send</button>
+        </form>
+    </div>
+
+</div>
+
+<script>
+
+let currentUser = null;
+
+async function loadChat(userId){
+    currentUser = userId;
+
+    const res = await fetch('/admin/support/messages/' + userId);
+    const data = await res.json();
+
+    const box = document.getElementById('messages');
+    box.innerHTML = '';
+
+    data.forEach(m => {
+
+        const name =
+            m.sender === 'admin'
+                ? 'Admin'
+                : (m.user_name || 'Player');
+
+        box.innerHTML += `
+            <div style="color:white;margin:5px 0;">
+                <b>${name}:</b> ${m.message}
+            </div>
+        `;
+    });
+}
+
+document.getElementById('replyForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    await fetch('/admin/support/reply', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({
+            user_id: currentUser,
+            message: document.getElementById('replyInput').value
+        })
+    });
+
+    document.getElementById('replyInput').value = '';
+    loadChat(currentUser);
+});
+
+</script>

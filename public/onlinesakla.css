@@ -1,0 +1,83 @@
+/* Custom Sakla Theme */
+:root {
+    --gold: #d4af37;
+    --felt-green: #064e3b;
+}
+
+/* Wood Table Effect */
+.game-container {
+    background: radial-gradient(circle, #065f46 0%, #064e3b 100%);
+    border: 15px solid #271b13;
+    box-shadow: inset 0 0 100px rgba(0,0,0,0.5), 0 20px 50px rgba(0,0,0,0.8);
+    position: relative;
+}
+
+/* Original Card Look */
+.sakla-card {
+    width: 140px;
+    height: 210px;
+    background: #fdfbf7;
+    border-radius: 10px;
+    position: relative;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+    border: 1px solid #ddd;
+    color: #1a1a1a;
+    overflow: hidden;
+    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Card Ornament/Pattern */
+.sakla-card::before {
+    content: '';
+    position: absolute;
+    top: 5px; left: 5px; right: 5px; bottom: 5px;
+    border: 2px solid #e5e7eb;
+    border-radius: 6px;
+    pointer-events: none;
+}
+
+.card-value {
+    font-family: 'Georgia', serif;
+    font-weight: bold;
+    font-size: 1.5rem;
+    position: absolute;
+    top: 10px;
+    left: 12px;
+}
+
+.card-suit {
+    font-size: 5rem;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.1));
+}
+
+/* Animations */
+.shuffling {
+    animation: shuffle-anim 0.5s infinite alternate;
+}
+
+@keyframes shuffle-anim {
+    from { transform: translateY(0) rotate(0deg); }
+    to { transform: translateY(-20px) rotate(5deg); }
+}
+
+/* Betting Button Upgrade */
+.bet-btn {
+    background: linear-gradient(145deg, #27272a, #18181b);
+    border: 1px solid #3f3f46;
+    box-shadow: 5px 5px 10px #09090b, -2px -2px 5px #27272a;
+}
+
+.bet-btn:active {
+    box-shadow: inset 2px 2px 5px #000;
+    transform: scale(0.95);
+}
+
+.bet-btn.selected {
+    border-color: var(--gold);
+    background: linear-gradient(145deg, #b48a1d, #d4af37);
+    color: black !important;
+}

@@ -1,0 +1,135 @@
+ <link rel="stylesheet" href="/slot_machine.css" />
+
+<div class="container text-center mt-4">
+    <h2 class="text-warning fw-bold">🎰 12-CELL SLOT MACHINE</h2>
+    <div class="card bg-dark p-3 shadow-lg border-warning">
+        
+        <!-- Slot Display (12 Cells) -->
+      <div id="slot-container" class="slot-grid mb-4">
+    <% for(let i=0; i<9; i++) { %>
+        <div class="slot-cell" id="cell-<%= i %>">❓</div>
+    <% } %>
+</div>
+
+        <!-- Betting Table -->
+       
+<div class="bet-panel mb-3">
+
+    <div class="bet-header">💰 PLACE YOUR BET</div>
+
+    <div class="bet-grid-vip">
+        <button class="chip" data-amt="1">₱1</button>
+        <button class="chip" data-amt="5">₱5</button>
+        <button class="chip" data-amt="10">₱10</button>
+
+        <button class="chip" data-amt="50">₱50</button>
+        <button class="chip" data-amt="100">₱100</button>
+        <button class="chip" data-amt="500">₱500</button>
+    </div>
+
+    <div class="bet-actions">
+        <button id="btn-clear">CLEAR</button>
+    </div>
+
+</div>
+
+        <div class="mb-3">
+            <h4 class="text-white">Current Bet: <span id="display-bet" class="text-warning">0</span> PHP</h4>
+        </div>
+
+        <button id="btn-spin" class="btn btn-warning btn-lg px-5 fw-bold rounded-pill shadow">SPIN NOW</button>
+    </div>
+</div>
+
+<script>
+let selectedBet = 0;
+
+const display = document.getElementById('display-bet');
+const cells = document.querySelectorAll('.slot-cell');
+const symbols = ['🍒', '🍋', '🔔', '💎', '7️⃣', '🍀'];
+
+/* ===== BET SYSTEM ===== */
+document.querySelectorAll('.chip').forEach(btn => {
+    btn.addEventListener('click', function () {
+        const amount = parseFloat(this.getAttribute('data-amt'));
+
+        if (isNaN(amount)) return;
+
+        selectedBet += amount;
+        display.innerText = selectedBet.toFixed(2);
+
+        display.style.transform = "scale(1.2)";
+        setTimeout(() => display.style.transform = "scale(1)", 100);
+    });
+});
+
+/* ===== CLEAR BET ===== */
+document.getElementById('btn-clear').addEventListener('click', function () {
+    selectedBet = 0;
+    display.innerText = "0";
+});
+
+/* ===== SPIN BUTTON (MISSING PART FIXED) ===== */
+document.getElementById('btn-spin').addEventListener('click', async function () {
+
+    if (selectedBet <= 0) {
+        alert('Maglagay muna ng taya!');
+        return;
+    }
+
+    this.disabled = true;
+
+    // SPIN ANIMATION
+    let spinInterval = setInterval(() => {
+        cells.forEach(c => {
+            c.innerText = symbols[Math.floor(Math.random() * symbols.length)];
+        });
+    }, 100);
+
+    try {
+        const response = await fetch('/slot/spin', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ amount: selectedBet })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            clearInterval(spinInterval);
+            alert(data.error || 'Error sa server');
+            this.disabled = false;
+            return;
+        }
+
+        setTimeout(() => {
+            clearInterval(spinInterval);
+
+            if (data.result === 'win') {
+                cells.forEach(c => c.innerText = '7️⃣');
+                alert('🎉 JACKPOT! ' + data.message);
+            } else {
+                cells.forEach(c => {
+                    c.innerText = symbols[Math.floor(Math.random() * symbols.length)];
+                });
+                alert(data.message);
+            }
+
+            location.reload();
+
+        }, 2000);
+
+    } catch (err) {
+        clearInterval(spinInterval);
+        alert('Server error');
+        this.disabled = false;
+    }
+});
+</script>
+
+<style>
+    .slot-cell { min-height: 80px; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
+    .bg-dark { background-color: #1a1a1a !important; }
+</style>

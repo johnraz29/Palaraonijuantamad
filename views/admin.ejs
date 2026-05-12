@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel | Palaro ni Juan</title>
+    <link rel="stylesheet" href="/admin.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #1a1a1a; color: #fff; margin: 0; }
+        
+        /* Stats Styling */
+        .admin-stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px; padding: 25px;
+            background: linear-gradient(145deg, #2c3e50, #1c2833);
+            border-radius: 15px; margin: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5); border: 1px solid #d4af37;
+        }
+        .stat-card { background: rgba(255, 255, 255, 0.05); padding: 20px; border-radius: 12px; border-left: 4px solid #d4af37; transition: 0.3s; }
+        .stat-card h3 { font-size: 0.85rem; color: #aaa; margin: 0 0 10px 0; letter-spacing: 1px; text-transform: uppercase; }
+        .stat-value { font-size: 28px; font-weight: bold; margin: 0; }
+
+        /* Status & Colors (Anti-Red Line) */
+        .status-pending { color: #f1c40f; font-weight: bold; }
+        .status-confirmed, .status-paid, .status-won { color: #2ecc71; font-weight: bold; }
+        .status-lost { color: #e74c3c; font-weight: bold; }
+        .side-meron { color: #e74c3c; font-weight: bold; }
+        .side-wala { color: #3498db; font-weight: bold; }
+        .gcash-highlight { color: #3498db; font-family: monospace; font-weight: bold; }
+
+        /* Navigation */
+        .ledger-access {
+            background: linear-gradient(45deg, #d4af37, #f1c40f); color: #000 !important;
+            padding: 12px 25px; border-radius: 50px; text-decoration: none;
+            font-weight: bold; display: inline-flex; align-items: center; gap: 10px; margin-bottom: 20px;
+        }
+        .tab-btn { background: none; border: none; color: #aaa; padding: 10px 20px; cursor: pointer; font-weight: bold; font-size: 1rem; }
+        .tab-btn.active { border-bottom: 3px solid #d4af37; color: #d4af37; }
+        
+        .tab-section { display: none; padding: 20px; }
+        .tab-section.active { display: block; }
+
+        /* UI Elements */
+        .admin-controls { background: #2c3e50; padding: 25px; border-radius: 12px; border: 1px solid #444; }
+        .btn-success { background: #27ae60; color: white; padding: 10px 15px; border: none; cursor: pointer; border-radius: 8px; font-weight: bold; }
+        
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #333; }
+        th { background: rgba(255,255,255,0.05); color: #d4af37; }
+
+        /* Modal */
+        .modal { display:none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px); }
+        .modal-content { background: #1c2833; margin: 2% auto; padding: 30px; width: 90%; max-width: 450px; border-radius: 15px; color: white; border: 1px solid #d4af37; }
+        .form-control { background: #2c3e50; border: 1px solid #444; color: white; padding: 10px; border-radius: 5px; width: 100%; margin-top: 5px; box-sizing: border-box; }
+    </style>
+</head>
+<body>
+    <header style="display: flex; justify-content: space-between; align-items: center; padding: 20px 40px; background: #111;">
+        <div class="logo" style="display: flex; align-items: center; gap: 15px;">
+            <img src="/images/admin.png" alt="Logo" style="height: 50px;">
+            <h1 style="color: #d4af37; margin: 0;">ADMIN DASHBOARD</h1>
+        </div>
+        <div class="user-info">
+            <p><i class="fas fa-user-shield"></i> Master Admin: <strong><%= user.name %></strong></p>
+            <a href="/logout" style="color: #e74c3c; text-decoration: none;"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </div>
+    </header>
+
+    <div class="admin-stats-container">
+        <div class="stat-card">
+            <h3><i class="fas fa-users"></i> Online Players</h3>
+            <p class="stat-value" style="color: #3498db;"><%= onlinePlayers %></p>
+        </div>
+        <div class="stat-card">
+            <h3><i class="fas fa-user-friends"></i> Registered Players</h3>
+            <p class="stat-value"><%= users.length %></p>
+        </div>
+        <div class="stat-card">
+            <h3><i class="fas fa-coins"></i> Total Bets Volume</h3>
+            <p class="stat-value" style="color: #f1c40f;">₱<%= totalBetsAmount.toLocaleString() %></p>
+        </div>
+        <div class="stat-card">
+            <h3><i class="fas fa-hand-holding-usd"></i> House Earnings</h3>
+            <p class="stat-value" style="color: #2ecc71;">₱<%= houseEarnings.toLocaleString() %></p>
+        </div>
+    </div>
+
+    <div style="padding: 0 20px; display: flex; gap: 15px; flex-wrap: wrap;">
+        <a href="/admin/house-ledger" class="ledger-access"><i class="fas fa-vault"></i> OPEN HOUSE LEDGER</a>
+    </div>
+
+    <div class="dashboard-tabs" style="margin: 0 20px; border-bottom: 1px solid #333;">
+        <button class="tab-btn active" data-tab="users-tab"><i class="fas fa-user-cog"></i> Users</button>
+        <button class="tab-btn" data-tab="tx-tab"><i class="fas fa-exchange-alt"></i> Transactions</button>
+        <button class="tab-btn" data-tab="bets-tab"><i class="fas fa-ticket-alt"></i> Bets</button>
+        <button class="tab-btn" data-tab="sabong-tab" style="background: #c0392b; color: white; border-radius: 5px 5px 0 0;"><i class="fas fa-fire"></i> SABONG VIDEO CONTROL</button>
+   <button class="tab-btn" data-tab="jackpot-tab">
+    <i class="fas fa-coins"></i> Jackpot Control
+</button>
+<button class="tab-btn" data-tab="slot-tab">
+    <i class="fas fa-gamepad"></i> Slot Machine Control
+</button>
+    </div>
+
+  <section id="users-tab" class="tab-section active">
+    <h2>User Management</h2>
+    <table>
+        <thead>
+            <tr><th>ID</th><th>Name</th><th>Email/Phone</th><th>Balance</th><th>Role</th><th>Action</th></tr>
+        </thead>
+        <tbody>
+            <% users.forEach(u => { %>
+            <tr>
+                <td><%= u.id %></td>
+                <td style="color: #d4af37;"><%= u.name %></td>
+                <td><%= u.email %><br><small><%= u.phone %></small></td>
+                <td style="color: #2ecc71; font-weight: bold;">₱<%= (u.balance||0).toLocaleString() %></td>
+                
+             <td>
+    <% if(u.is_admin == 1) { %> 
+        <span style="color: #e74c3c; font-weight: bold;">ADMIN</span>
+    <% } else if(u.is_coadmin == 1) { %> 
+        <span style="color: #f39c12; font-weight: bold;">COADMIN</span>
+    <% } else if(u.is_agent == 1) { %> 
+        <span style="color: #2ecc71; font-weight: bold;">AGENT</span><br>
+        <small style="color: #f1c40f;">Code: <%= u.referral_code %></small>
+    <% } else { %>
+        <span style="color: #aaa;">PLAYER</span>
+    <% } %>
+</td>
+    <td>
+    <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+        <!-- EDIT BUTTON (EXISTING) -->
+        <button class="edit-user-btn" 
+            data-id="<%= u.id %>" data-name="<%= u.name %>" data-email="<%= u.email %>"
+            data-phone="<%= u.phone %>" data-gcash="<%= u.gcash_number %>" data-balance="<%= u.balance || 0 %>"
+            style="background: #f1c40f; border: none; padding: 5px 12px; cursor: pointer; border-radius: 5px; font-weight: bold;">
+            Edit
+        </button>
+
+        <% if(u.is_admin != 1) { %> 
+            
+            <!-- AGENT TOGGLE SECTION -->
+            <% if(u.is_agent == 1) { %>
+                <form action="/admin/remove-agent" method="POST" style="display:inline;">
+                    <input type="hidden" name="user_id" value="<%= u.id %>">
+                    <button type="submit" style="background: #e74c3c; color: white; border: none; padding: 5px 12px; cursor: pointer; border-radius: 5px; font-weight: bold; font-size: 0.75rem;" onclick="return confirm('Alisin ang Agent role?')">
+                        <i class="fas fa-user-minus"></i> Remove Agent
+                    </button>
+                </form>
+            <% } else { %>
+                <form action="/admin/make-agent" method="POST" style="display:inline;">
+                    <input type="hidden" name="user_id" value="<%= u.id %>">
+                    <button type="submit" style="background: #3498db; color: white; border: none; padding: 5px 12px; cursor: pointer; border-radius: 5px; font-weight: bold; font-size: 0.75rem;">
+                        <i class="fas fa-user-plus"></i> Make Agent
+                    </button>
+                </form>
+            <% } %>
+
+            <!-- COADMIN TOGGLE SECTION (ITO YUNG DAPAT NADAGDAG) -->
+            <% if(u.is_coadmin == 1) { %>
+                <form action="/admin/remove-coadmin" method="POST" style="display:inline;">
+                    <input type="hidden" name="user_id" value="<%= u.id %>">
+                    <button type="submit" style="background: #e67e22; color: white; border: none; padding: 5px 12px; cursor: pointer; border-radius: 5px; font-weight: bold; font-size: 0.75rem;" onclick="return confirm('Alisin ang Coadmin access?')">
+                        <i class="fas fa-user-shield"></i> Remove Coadmin
+                    </button>
+                </form>
+            <% } else { %>
+                <form action="/admin/make-coadmin" method="POST" style="display:inline;">
+                    <input type="hidden" name="user_id" value="<%= u.id %>">
+                    <button type="submit" style="background: #9b59b6; color: white; border: none; padding: 5px 12px; cursor: pointer; border-radius: 5px; font-weight: bold; font-size: 0.75rem;">
+                        <i class="fas fa-shield-alt"></i> Make Coadmin
+                    </button>
+                </form>
+            <% } %>
+
+        <% } %>
+    </div>
+</td>
+            </tr>
+            <% }) %>
+        </tbody>
+    </table>
+</section>
+
+    <section id="tx-tab" class="tab-section">
+        <h2>Recent Transactions</h2>
+        <table>
+            <thead>
+                <tr><th>User</th><th>Type</th><th>Amount</th><th>Status</th><th>GCash Info</th><th>Action</th></tr>
+            </thead>
+            <tbody>
+                <% txs.forEach(function(t) { 
+                    var u = users.find(user => user.id === t.user_id);
+                %>
+                <tr>
+                    <td><%= u ? u.name : 'ID: ' + t.user_id %></td>
+                    <td><strong><%= t.type.toUpperCase() %></strong></td>
+                    <td>₱<%= t.amount.toLocaleString() %></td>
+                    <td class="status-<%= t.status.toLowerCase() %>">
+                        <%= t.status.toUpperCase() %>
+                    </td>
+                    <td class="gcash-highlight">
+                        <% if (t.type === 'withdraw') { %>
+                            <%= u && u.gcash_number ? u.gcash_number : 'NO GCASH' %>
+                        <% } else { %>
+                            <span style="color: #555;">---</span>
+                        <% } %>
+                    </td>
+                    <td>
+                        <% if (t.status === 'pending') { %>
+                            <form method="post" action="/admin/tx/<%= t.type === 'topup' ? 'confirm' : 'complete' %>" style="display:inline;">
+                                <input type="hidden" name="id" value="<%= t.id %>"/>
+                                <button class="btn-success" style="padding: 5px 10px; font-size: 0.75rem;">Confirm</button>
+                            </form>
+                        <% } %>
+                    </td>
+                </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    </section>
+
+    <section id="bets-tab" class="tab-section">
+        <h2>Active Bets</h2>
+        <table>
+            <thead>
+                <tr><th>User</th><th>Side</th><th>Amount</th><th>Status</th></tr>
+            </thead>
+            <tbody>
+                <% if (typeof bets !== 'undefined' && bets.length > 0) { %>
+                    <% bets.forEach(function(b) { 
+                        var u = users.find(user => user.id === b.user_id);
+                    %>
+                    <tr>
+                        <td><%= u ? u.name : b.user_id %></td>
+                        <td>
+                            <span class="side-<%= b.choice ? b.choice.toLowerCase() : '' %>">
+                                <%= b.choice || b.numbers %>
+                            </span>
+                        </td>
+                        <td>₱<%= b.amount.toLocaleString() %></td>
+                        <td class="status-<%= b.status.toLowerCase() %>"><%= b.status.toUpperCase() %></td>
+                    </tr>
+                    <% }) %>
+                <% } else { %>
+                    <tr><td colspan="4" style="text-align:center; color:#888;">No bets recorded.</td></tr>
+                <% } %>
+            </tbody>
+        </table>
+    </section>
+
+    <section id="sabong-tab" class="tab-section">
+        <div class="admin-controls">
+            <h2 style="color: #e74c3c;"><i class="fas fa-video"></i> YouTube Stream Control</h2>
+            <form action="/admin/video/update" method="POST">
+                <label>YouTube Embed URL</label>
+                <input type="text" name="url" class="form-control" placeholder="https://www.youtube.com/embed/XXXXXXX" required>
+                <div style="display: flex; gap: 10px; margin-top: 15px;">
+                    <div style="flex: 1;">
+                        <label>Stream Status</label>
+                        <select name="status" class="form-control">
+                            <option value="playing">LIVE (Playing)</option>
+                            <option value="paused">PAUSED / PREPARING</option>
+                        </select>
+                    </div>
+                    <div style="display: flex; align-items: flex-end;">
+                        <button type="submit" class="btn-success" style="height: 42px; padding: 0 30px;">UPDATE VIDEO</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </section>
+
+<section id="jackpot-tab" class="tab-section">
+    <div class="admin-controls">
+        <h2 style="color: #f1c40f;">
+            <i class="fas fa-coins"></i> Jackpot Prize Control
+        </h2>
+
+        <div style="background: rgba(0,0,0,0.3); padding: 20px; border-radius: 10px; border: 1px dashed #f1c40f; margin-bottom: 20px;">
+            <p style="margin: 0; color: #aaa;">Current Jackpot Prize:</p>
+
+            <h1 style="color: #f1c40f; margin: 10px 0;">
+                ₱<%= typeof currentJackpot !== 'undefined' ? Number(currentJackpot).toLocaleString() : '0' %>
+            </h1>
+        </div>
+
+        <form action="/admin/jackpot/update" method="POST">
+            <label>Set Jackpot Prize Amount</label>
+
+            <input
+                type="number"
+                name="jackpot"
+                class="form-control"
+                min="0"
+                step="1"
+                value="<%= typeof currentJackpot !== 'undefined' ? currentJackpot : 0 %>"
+                required
+            >
+
+            <button
+                type="submit"
+                class="btn-success"
+                style="margin-top: 20px; width: 100%; background: #f1c40f; color: #000;"
+            >
+                UPDATE JACKPOT
+            </button>
+        </form>
+    </div>
+</section>
+
+
+
+
+
+
+
+
+<section id="slot-tab" class="tab-section">
+    <div class="admin-controls">
+        <h2 style="color: #00d4ff;">
+            <i class="fas fa-percentage"></i> Slot Machine Win Rate
+        </h2>
+
+        <div style="background: rgba(0,0,0,0.3); padding: 20px; border-radius: 10px; border: 1px dashed #00d4ff; margin-bottom: 20px;">
+            <p style="margin: 0; color: #aaa;">Current Configured Win Rate:</p>
+            <h1 style="color: #2ecc71; margin: 10px 0;">
+                <%= typeof currentSlotRate !== 'undefined' ? currentSlotRate : '30' %>%
+            </h1>
+        </div>
+
+        <form action="/admin/slot/settings" method="POST">
+            <label>Set Win Percentage (1% - 90%)</label>
+            <div style="display: flex; gap: 20px; align-items: center; margin-top: 10px;">
+                <input 
+                    type="range" 
+                    name="win_rate" 
+                    id="slotWinRange"
+                    min="1" 
+                    max="90" 
+                    value="<%= typeof currentSlotRate !== 'undefined' ? currentSlotRate : '30' %>" 
+                    style="flex: 1; accent-color: #00d4ff;"
+                    oninput="document.getElementById('slotValueLabel').innerText = this.value + '%'"
+                >
+                <span id="slotValueLabel" style="font-size: 1.5rem; font-weight: bold; min-width: 60px; color: #00d4ff;">
+                    <%= typeof currentSlotRate !== 'undefined' ? currentSlotRate : '30' %>%
+                </span>
+            </div>
+
+            <button type="submit" class="btn-success" style="margin-top: 25px; background: #00d4ff; color: #000; width: 100%;">
+                UPDATE SLOT WIN RATE
+            </button>
+        </form>
+
+        <div style="margin-top: 20px; padding: 15px; background: rgba(231, 76, 60, 0.1); border-left: 4px solid #e74c3c;">
+            <small style="color: #e74c3c;">
+                <strong>💡 ADMIN TIP:</strong><br>
+                • <strong>Lower % (e.g. 10-20%):</strong> Mas mahirap manalo ang players, mas mabilis lumaki ang House Ledger.<br>
+                • <strong>Higher % (e.g. 50-70%):</strong> Mas madaling manalo, ginagamit para ma-attract ang players.
+            </small>
+        </div>
+    </div>
+</section>
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <h3 style="color: #d4af37; margin-top: 0;">Edit Player Profile</h3>
+            <form action="/admin/user/update" method="POST">
+                <input type="hidden" name="id" id="edit-id">
+                <label>Full Name</label><input type="text" name="name" id="edit-name" class="form-control" required>
+                <label>Email</label><input type="email" name="email" id="edit-email" class="form-control" required>
+                <label>Phone</label><input type="text" name="phone" id="edit-phone" class="form-control">
+                <label>GCash</label><input type="text" name="gcash_number" id="edit-gcash" class="form-control">
+                <label>Current Balance</label><input type="text" id="edit-balance" class="form-control" readonly style="color: #2ecc71; font-weight: bold;">
+                
+                <label style="display:block; margin-top:10px;">New Password</label>
+                <input type="password" name="new_password" class="form-control" placeholder="Leave blank if no change">
+
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button type="submit" class="btn-success" style="flex: 1;">SAVE CHANGES</button>
+                    <button type="button" onclick="closeModal()" style="flex: 1; background: #555; color: white; border: none; border-radius: 5px; cursor: pointer;">CANCEL</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Tab switching
+        const tabs = document.querySelectorAll('.tab-btn');
+        const sections = document.querySelectorAll('.tab-section');
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(t => t.classList.remove('active'));
+                sections.forEach(s => s.classList.remove('active'));
+                tab.classList.add('active');
+                document.getElementById(tab.dataset.tab).classList.add('active');
+            });
+        });
+
+        // Modal Logic
+        const modal = document.getElementById('editModal');
+        const editBtns = document.querySelectorAll('.edit-user-btn');
+
+        editBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.getElementById('edit-id').value = btn.dataset.id;
+                document.getElementById('edit-name').value = btn.dataset.name;
+                document.getElementById('edit-email').value = btn.dataset.email;
+                document.getElementById('edit-phone').value = btn.dataset.phone;
+                document.getElementById('edit-gcash').value = btn.dataset.gcash !== "null" ? btn.dataset.gcash : "";
+                document.getElementById('edit-balance').value = "₱" + parseFloat(btn.dataset.balance).toLocaleString();
+                modal.style.display = "block";
+            });
+        });
+
+        function closeModal() { modal.style.display = "none"; }
+        window.onclick = function(event) { if (event.target == modal) closeModal(); }
+    </script>
+</body>
+</html>

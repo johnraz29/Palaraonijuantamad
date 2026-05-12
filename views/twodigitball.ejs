@@ -1,0 +1,61 @@
+<link rel="stylesheet" href="/twodigitball.css" />
+<div class="container mt-5">
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+            <h3 class="mb-0">Two-Digit Ball (1-60)</h3>
+            <small>Manalo ng taya x 50! (Dapat exact order)</small>
+        </div>
+        <div class="card-body text-center">
+            <h5 id="timer-display" class="text-danger mb-4">Next Draw in: --:--:--</h5>
+
+            <form action="/bet/twodigit" method="POST" id="betForm">
+                <div class="row justify-content-center mb-3">
+                    <div class="col-md-3">
+                        <label>Unang Bola (1-60)</label>
+                        <input type="number" name="num1" min="1" max="60" class="form-control form-control-lg text-center" required>
+                    </div>
+                    <div class="col-md-3">
+                        <label>Pangalawang Bola (1-60)</label>
+                        <input type="number" name="num2" min="1" max="60" class="form-control form-control-lg text-center" required>
+                    </div>
+                </div>
+
+                <div class="row justify-content-center mb-4">
+                    <div class="col-md-4">
+                        <label>Taya (Minimum ₱10)</label>
+                        <input type="number" name="amount" min="10" class="form-control text-center" placeholder="Amount" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-success btn-lg px-5" id="betBtn">Taya Na!</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Logic para sa 2-hour timer (Countdown to next even hour: 10am, 12pm, 2pm, etc.)
+    function updateTimer() {
+        const now = new Date();
+        const nextDraw = new Date();
+        nextDraw.setHours(Math.ceil((now.getHours() + 1) / 2) * 2, 0, 0, 0);
+        
+        const diff = nextDraw - now;
+        const hours = Math.floor(diff / (1000 * 60 * 60));
+        const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const secs = Math.floor((diff % (1000 * 60)) / 1000);
+
+        document.getElementById('timer-display').innerText = 
+            `Next Draw in: ${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+
+        // Disable betting 5 minutes before draw (Kunwari ongoing na)
+        if (mins < 5 && hours === 0) {
+            document.getElementById('betBtn').disabled = true;
+            document.getElementById('betBtn').innerText = "Game Ongoing - Bawal tumaya";
+        } else {
+            document.getElementById('betBtn').disabled = false;
+        }
+    }
+    setInterval(updateTimer, 1000);
+    updateTimer();
+</script>

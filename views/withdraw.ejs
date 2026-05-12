@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Withdraw Funds | Palaro Ni Juan</title>
+    <link rel="stylesheet" href="/withdraw.css" />
+</head>
+<body>
+    <div class="background"></div>
+
+    <header class="top-header">
+        <div class="logo">
+            <img src="/images/withdraw.png" alt="Logo">
+            <h1>Withdraw Funds</h1>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="topup-card">
+            <h2>Withdraw</h2>
+            
+            <div class="balance-info">
+                <p class="balance-label">Your Current Balance</p>
+                <span>₱<%= user.balance.toFixed(2) %></span>
+            </div>
+
+            <p class="description">Enter amount to withdraw. Admin will process withdrawals manually via your saved GCash number.</p>
+            
+            <form method="post" action="/withdraw" id="withdrawForm">
+                <div class="form-group">
+                    <label for="amount">Amount (PHP)</label>
+                    <input id="amount" name="amount" type="number" step="1" placeholder="100 - 100,000" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="gcash_display">GCash Number (Set in Profile)</label>
+                    <input id="gcash_display" type="text" value="<%= user.gcash_number || 'NOT SET' %>" readonly />
+                    
+                    <div class="profile-link-wrapper">
+                        <% if(!user.gcash_number) { %>
+                            <a href="/profile" class="btn-profile error-link">⚠️ Set GCash number in Profile!</a>
+                        <% } else { %>
+                            <a href="/profile" class="btn-profile">Change GCash Number</a>
+                        <% } %>
+                    </div>
+                </div>
+
+                <button type="submit" class="topup-btn" <% if(!user.gcash_number) { %> disabled <% } %> >
+                    Request Withdraw
+                </button>
+            </form>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; <%= new Date().getFullYear() %> Palaro Ni Juan. All rights reserved.</p>
+    </footer>
+</body>
+</html>

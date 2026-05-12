@@ -1,0 +1,315 @@
+/* ========================================
+   FUTURISTIC CASINO COADMIN DASHBOARD
+======================================== */
+
+/* ===== BODY ===== */
+body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #ffffff;
+    overflow-x: hidden;
+    background: #050816;
+    position: relative;
+}
+
+/* ===== CASINO BACKGROUND IMAGE ===== */
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background:
+        linear-gradient(rgba(5, 8, 22, 0.82),
+        rgba(5, 8, 22, 0.92)),
+        url("https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=1974&auto=format&fit=crop")
+        center center / cover no-repeat;
+    z-index: -2;
+}
+
+/* ===== GLOW EFFECT ===== */
+body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background:
+        radial-gradient(circle at top left,
+        rgba(0,255,255,0.12),
+        transparent 30%),
+        radial-gradient(circle at bottom right,
+        rgba(255,0,128,0.12),
+        transparent 30%);
+    z-index: -1;
+}
+
+/* ===== MAIN CONTAINER ===== */
+.container {
+    padding-top: 40px;
+    padding-bottom: 40px;
+}
+
+/* ===== TITLE ===== */
+h2 {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #00f0ff;
+    text-shadow:
+        0 0 10px rgba(0,240,255,0.7),
+        0 0 20px rgba(0,240,255,0.5);
+}
+
+.text-muted {
+    color: #a1a1aa !important;
+}
+
+/* ===== GLASS CARD ===== */
+.card {
+    background: rgba(15, 23, 42, 0.72) !important;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 20px;
+    overflow: hidden;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    box-shadow:
+        0 0 25px rgba(0,255,255,0.08),
+        0 0 60px rgba(0,0,0,0.4);
+}
+
+/* ===== CARD HEADER ===== */
+.card-header {
+    background: rgba(255,255,255,0.03) !important;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    padding: 20px;
+}
+
+.card-header h5 {
+    color: #00f0ff;
+    font-weight: 700;
+}
+
+/* ===== ACTIVE COADMIN CARD ===== */
+.card.bg-light {
+    background: rgba(255,255,255,0.05) !important;
+    border: 1px solid rgba(0,255,255,0.15);
+}
+
+.card.bg-light h5 {
+    color: #00f0ff !important;
+}
+
+/* ========================================
+   TABLE DESIGN
+======================================== */
+
+.table-responsive {
+    padding: 20px;
+}
+
+.table {
+    width: 100%;
+    border-collapse: separate !important;
+    border-spacing: 0 14px;
+    color: #fff;
+}
+
+/* ===== TABLE HEADER ===== */
+.table thead th {
+    background: rgba(0,255,255,0.08);
+    color: #00f0ff;
+    border: none !important;
+    padding: 18px;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    white-space: nowrap;
+}
+
+/* Rounded Header */
+.table thead th:first-child {
+    border-top-left-radius: 14px;
+    border-bottom-left-radius: 14px;
+}
+
+.table thead th:last-child {
+    border-top-right-radius: 14px;
+    border-bottom-right-radius: 14px;
+}
+
+/* ===== TABLE ROW ===== */
+.table tbody tr {
+    background: rgba(255,255,255,0.04);
+    transition: 0.3s ease;
+    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+}
+
+/* Hover Effect */
+.table tbody tr:hover {
+    transform: translateY(-3px) scale(1.01);
+    background: rgba(0,255,255,0.08);
+    box-shadow:
+        0 0 20px rgba(0,255,255,0.12),
+        0 0 40px rgba(0,255,255,0.08);
+}
+
+/* ===== TABLE CELLS ===== */
+.table tbody td {
+    padding: 20px 18px;
+    vertical-align: middle;
+    border: none !important;
+}
+
+/* Rounded Row */
+.table tbody td:first-child {
+    border-top-left-radius: 16px;
+    border-bottom-left-radius: 16px;
+}
+
+.table tbody td:last-child {
+    border-top-right-radius: 16px;
+    border-bottom-right-radius: 16px;
+}
+
+/* ===== PLAYER NAME ===== */
+.table .fw-bold {
+    color: #ffffff;
+}
+
+/* ===== GCASH NUMBER ===== */
+code {
+    color: #00f0ff !important;
+    background: rgba(0,255,255,0.08);
+    padding: 6px 10px;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+/* ===== AMOUNT ===== */
+.text-danger {
+    color: #00ff99 !important;
+    font-size: 1rem;
+    text-shadow: 0 0 10px rgba(0,255,153,0.4);
+}
+
+/* ===== STATUS BADGE ===== */
+.badge {
+    padding: 8px 14px;
+    border-radius: 50px;
+    font-size: 11px;
+    letter-spacing: 1px;
+    font-weight: 700;
+}
+
+.bg-warning {
+    background: linear-gradient(45deg, #facc15, #f97316) !important;
+    color: #111827 !important;
+}
+
+/* ========================================
+   BUTTONS
+======================================== */
+
+.btn-success {
+    background: linear-gradient(45deg, #00ff99, #00e1ff);
+    border: none;
+    color: #04111d;
+    font-weight: 700;
+    border-radius: 50px;
+    padding: 10px 18px;
+    transition: 0.3s ease;
+    box-shadow: 0 0 18px rgba(0,255,153,0.25);
+}
+
+.btn-success:hover {
+    transform: translateY(-2px);
+    box-shadow:
+        0 0 20px rgba(0,255,153,0.45),
+        0 0 40px rgba(0,225,255,0.25);
+}
+
+/* ===== BACK LINK ===== */
+a {
+    color: #00f0ff;
+    transition: 0.3s;
+}
+
+a:hover {
+    color: #ffffff;
+    text-shadow: 0 0 10px rgba(0,240,255,0.7);
+}
+
+/* ===== ICONS ===== */
+.fas {
+    filter: drop-shadow(0 0 6px rgba(0,255,255,0.6));
+}
+
+/* ===== EMPTY STATE ===== */
+.fa-info-circle {
+    color: #00f0ff;
+}
+
+/* ========================================
+   MOBILE RESPONSIVE
+======================================== */
+
+@media (max-width: 768px) {
+
+    h2 {
+        font-size: 1.5rem;
+    }
+
+    .table thead {
+        display: none;
+    }
+
+    .table,
+    .table tbody,
+    .table tr,
+    .table td {
+        display: block;
+        width: 100%;
+    }
+
+    .table tbody tr {
+        margin-bottom: 20px;
+        padding: 10px;
+    }
+
+    .table tbody td {
+        text-align: right;
+        position: relative;
+        padding-left: 50%;
+    }
+
+    .table tbody td::before {
+        position: absolute;
+        left: 15px;
+        top: 18px;
+        font-weight: bold;
+        color: #00f0ff;
+        text-align: left;
+    }
+
+    .table tbody td:nth-child(1)::before {
+        content: "Date";
+    }
+
+    .table tbody td:nth-child(2)::before {
+        content: "Player";
+    }
+
+    .table tbody td:nth-child(3)::before {
+        content: "GCash";
+    }
+
+    .table tbody td:nth-child(4)::before {
+        content: "Amount";
+    }
+
+    .table tbody td:nth-child(5)::before {
+        content: "Status";
+    }
+
+    .table tbody td:nth-child(6)::before {
+        content: "Action";
+    }
+}

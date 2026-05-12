@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VIP Profile | Palaro Ni Juan</title>
+    <link rel="stylesheet" href="/profile.css" />
+</head>
+<body>
+    <div class="background"></div>
+
+    <header class="top-header">
+        <div class="logo">
+            <img src="/images/profile.png" alt="Logo">
+            <h1>User Profile</h1>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="alert-container">
+            <% if (messages.success) { %>
+                <div class="alert alert-success"><%= messages.success %></div>
+            <% } %>
+            <% if (messages.error) { %>
+                <div class="alert alert-danger"><%= messages.error %></div>
+            <% } %>
+        </div>
+
+        <section class="profile-layout">
+            
+            <div class="profile-card sidebar">
+                <div class="card-body text-center">
+                    <div class="avatar-wrapper">
+                        <img src="https://ui-avatars.com/api/?name=<%= user.name %>&background=d4af37&color=000&size=128" class="profile-avatar" alt="Profile">
+                    </div>
+                    <h4 class="user-name"><%= user.name %></h4>
+                    <p class="user-email"><%= user.email %></p>
+                    <div class="balance-box">
+                        <small>WALLET BALANCE</small>
+                        <span class="balance-amount">₱<%= user.balance.toFixed(2) %></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="forms-container">
+                
+                <div class="profile-card">
+                    <div class="card-header">
+                        <h5>Personal Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <form action="/profile/update-info" method="POST">
+                            <div class="form-group">
+                                <label>Full Name 
+                                    <span style="color: #d4af37; font-size: 10px; float: right;">
+                                        (Edits: <%= user.name_change_count || 0 %>/2)
+                                    </span>
+                                </label>
+                                <input type="text" name="name" value="<%= user.name %>" required 
+                                       <%= user.name_change_count >= 2 ? 'readonly style="background-color: #1a1a1a; color: #888; cursor: not-allowed; border-color: #333;"' : '' %>>
+                                
+                                <% if (user.name_change_count >= 2) { %>
+                                    <small style="color: #ff4d4d; font-size: 10px; margin-top: 5px; display: block;">
+                                        * Name change limit reached. Contact support to change name.
+                                    </small>
+                                <% } %>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Email Address</label>
+                                <input type="email" name="email" value="<%= user.email %>" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Phone Number</label>
+                                <input type="text" name="phone" value="<%= user.phone %>" required>
+                            </div>
+                            <button type="submit" class="btn-gold">Update Profile</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="profile-card">
+                    <div class="card-header info-header">
+                        <h5>Withdrawal Settings</h5>
+                    </div>
+                    <div class="card-body">
+                        <form action="/profile/update-payment" method="POST">
+                            <div class="form-group">
+                                <label>GCash Number</label>
+                                <input type="text" name="gcash_number" value="<%= user.gcash_number || '' %>" placeholder="09xxxxxxxxx" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="label-danger">Confirm with Current Password</label>
+                                <input type="password" name="current_password" placeholder="Enter password to save changes" required>
+                            </div>
+                            <button type="submit" class="btn-info">Save Payment Details</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="profile-card">
+                    <div class="card-header danger-header">
+                        <h5>Security & Password</h5>
+                    </div>
+                    <div class="card-body">
+                        <form action="/profile/update-password" method="POST">
+                            <div class="form-group">
+                                <label>Current Password</label>
+                                <input type="password" name="current_password" placeholder="Kasalukuyang password" required>
+                            </div>
+                            
+                            <hr style="border: 0; border-top: 1px solid #333; margin: 20px 0;">
+
+                            <div class="form-group">
+                                <label>New Password</label>
+                                <input type="password" name="new_password" placeholder="Bagong password" required minlength="6">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Confirm New Password</label>
+                                <input type="password" name="confirm_password" placeholder="Ulitin ang bagong password" required minlength="6">
+                            </div>
+
+                            <button type="submit" class="btn-danger">Change Password</button>
+                        </form>
+                    </div>
+                </div>
+
+            </div> 
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; <%= new Date().getFullYear() %> Palaro Ni Juan. All rights reserved.</p>
+    </footer>
+</body>
+</html>

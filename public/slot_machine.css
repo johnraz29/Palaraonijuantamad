@@ -1,0 +1,361 @@
+/* =========================================
+   FUTURISTIC CASINO SLOT MACHINE CSS
+========================================= */
+
+/* ===== BODY ===== */
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+    color: white;
+    background: #050816;
+    position: relative;
+}
+
+/* ===== CASINO BACKGROUND IMAGE ===== */
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+
+    background:
+        linear-gradient(
+            rgba(5, 8, 22, 0.82),
+            rgba(5, 8, 22, 0.92)
+        ),
+        url("https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=1974&auto=format&fit=crop")
+        center center / cover no-repeat;
+
+    z-index: -2;
+}
+
+/* ===== NEON GLOW OVERLAY ===== */
+body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+
+    background:
+        radial-gradient(circle at top left,
+        rgba(0,255,255,0.12),
+        transparent 30%),
+
+        radial-gradient(circle at bottom right,
+        rgba(255,0,128,0.12),
+        transparent 30%);
+
+    z-index: -1;
+}
+
+/* =========================================
+   MAIN CARD
+========================================= */
+
+.card {
+    background: rgba(15, 23, 42, 0.72);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 24px;
+
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+
+    box-shadow:
+        0 0 25px rgba(0,255,255,0.08),
+        0 0 60px rgba(0,0,0,0.4);
+
+    overflow: hidden;
+}
+
+/* =========================================
+   TITLE
+========================================= */
+
+h2 {
+    color: #00f0ff;
+    font-weight: 800;
+    text-shadow:
+        0 0 10px rgba(0,240,255,0.7),
+        0 0 20px rgba(0,240,255,0.5);
+}
+
+/* =========================================
+   SLOT GRID
+========================================= */
+
+.slot-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+
+    max-width: 380px;
+    margin: auto;
+    padding: 10px;
+}
+
+/* =========================================
+   SLOT CELLS
+========================================= */
+
+.slot-cell {
+    height: 100px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 38px;
+    font-weight: bold;
+
+    border-radius: 20px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(0,255,255,0.12),
+            rgba(255,255,255,0.04)
+        );
+
+    border: 1px solid rgba(0,255,255,0.2);
+
+    box-shadow:
+        inset 0 0 12px rgba(255,255,255,0.05),
+        0 0 15px rgba(0,255,255,0.08);
+
+    transition: 0.25s ease;
+}
+
+/* HOVER */
+.slot-cell:hover {
+    transform: translateY(-3px) scale(1.05);
+
+    box-shadow:
+        0 0 20px rgba(0,255,255,0.25),
+        0 0 40px rgba(0,255,255,0.15);
+
+    border-color: rgba(0,255,255,0.5);
+}
+
+/* =========================================
+   BET PANEL
+========================================= */
+
+.bet-panel {
+    margin-top: 25px;
+
+    background: rgba(15, 23, 42, 0.72);
+
+    border-radius: 20px;
+    border: 1px solid rgba(0,255,255,0.15);
+
+    padding: 20px;
+
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+
+    box-shadow:
+        0 0 20px rgba(0,255,255,0.08);
+}
+
+/* ===== HEADER ===== */
+
+.bet-header {
+    text-align: center;
+    font-size: 18px;
+    font-weight: 800;
+
+    color: #00f0ff;
+
+    letter-spacing: 2px;
+
+    margin-bottom: 20px;
+
+    text-shadow:
+        0 0 10px rgba(0,240,255,0.6);
+}
+
+/* =========================================
+   CHIP GRID
+========================================= */
+
+.bet-grid-vip {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+}
+
+/* =========================================
+   CASINO CHIPS
+========================================= */
+
+.chip {
+    height: 65px;
+
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.4);
+
+    font-size: 18px;
+    font-weight: bold;
+    color: white;
+
+    cursor: pointer;
+
+    transition: 0.25s ease;
+
+    box-shadow:
+        inset 0 0 10px rgba(255,255,255,0.2),
+        0 0 15px rgba(0,0,0,0.4);
+}
+
+/* ===== CHIP COLORS ===== */
+
+.chip[data-amt="1"] {
+    background: radial-gradient(circle, #00ff99, #006b3f);
+}
+
+.chip[data-amt="5"] {
+    background: radial-gradient(circle, #2979ff, #001b5e);
+}
+
+.chip[data-amt="10"] {
+    background: radial-gradient(circle, #ffb300, #ff6f00);
+}
+
+.chip[data-amt="50"] {
+    background: radial-gradient(circle, #d500f9, #4a0072);
+}
+
+.chip[data-amt="100"] {
+    background: radial-gradient(circle, #00e5ff, #006064);
+}
+
+.chip[data-amt="500"] {
+    background: radial-gradient(circle, #ffd700, #8b6508);
+}
+
+/* ===== CHIP HOVER ===== */
+
+.chip:hover {
+    transform: scale(1.12) rotate(6deg);
+
+    box-shadow:
+        0 0 20px rgba(255,255,255,0.5),
+        0 0 35px rgba(0,255,255,0.3);
+}
+
+/* =========================================
+   BET DISPLAY
+========================================= */
+
+#display-bet {
+    font-size: 34px;
+    font-weight: bold;
+
+    color: #00ff99;
+
+    text-shadow:
+        0 0 10px rgba(0,255,153,0.5),
+        0 0 20px rgba(0,255,153,0.3);
+}
+
+/* =========================================
+   SPIN BUTTON
+========================================= */
+
+#btn-spin {
+    background:
+        linear-gradient(
+            45deg,
+            #00ff99,
+            #00e1ff
+        );
+
+    border: none;
+    border-radius: 14px;
+
+    color: #04111d;
+
+    font-size: 20px;
+    font-weight: 800;
+
+    padding: 14px 30px;
+
+    transition: 0.25s ease;
+
+    box-shadow:
+        0 0 20px rgba(0,255,153,0.25);
+}
+
+/* HOVER */
+#btn-spin:hover {
+    transform: translateY(-2px) scale(1.05);
+
+    box-shadow:
+        0 0 20px rgba(0,255,153,0.45),
+        0 0 40px rgba(0,225,255,0.25);
+}
+
+/* =========================================
+   CLEAR BUTTON
+========================================= */
+
+#btn-clear {
+    background:
+        linear-gradient(
+            45deg,
+            #ff1744,
+            #b71c1c
+        );
+
+    border: none;
+    border-radius: 12px;
+
+    color: white;
+    font-weight: bold;
+
+    padding: 12px 24px;
+
+    transition: 0.25s ease;
+
+    box-shadow:
+        0 0 15px rgba(255,23,68,0.25);
+}
+
+/* HOVER */
+#btn-clear:hover {
+    transform: scale(1.05);
+
+    box-shadow:
+        0 0 20px rgba(255,23,68,0.45);
+}
+
+/* =========================================
+   MOBILE RESPONSIVE
+========================================= */
+
+@media (max-width: 768px) {
+
+    .slot-grid {
+        gap: 12px;
+        max-width: 320px;
+    }
+
+    .slot-cell {
+        height: 80px;
+        font-size: 28px;
+    }
+
+    .chip {
+        height: 55px;
+        font-size: 15px;
+    }
+
+    #btn-spin,
+    #btn-clear {
+        width: 100%;
+    }
+
+    h2 {
+        font-size: 1.5rem;
+    }
+}

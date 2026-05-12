@@ -1,0 +1,134 @@
+
+    <link rel="stylesheet" href="/onlinehorserace.css" />
+
+
+<div class="casino-bg"> <!-- Main Wrapper para sa background -->
+    <div class="container py-5">
+        <div class="card horse-race-card shadow-lg">
+            
+            <div class="race-header">
+                <div class="header-content">
+                    <h2 class="m-0 text-warning fw-bold">🏇 ROYAL DERBY</h2>
+                    <div class="balance-pill">
+                        <span>Balance: </span>
+                        <span class="text-success fw-bold">₱<%= user.balance.toLocaleString() %></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-body">
+                <!-- Race Track -->
+                <div id="race-track">
+                    <div class="finish-line"></div>
+                    
+                    <% [1, 2, 3, 4].forEach(num => { %>
+                        <div class="horse-lane">
+                            <div class="lane-number"><%= num %></div>
+                            
+   
+    <div id="horse-<%= num %>" class="horse">
+    <div class="horse-emoji"><h1>🏇</h1></div>
+    <span class="horse-label">H-<%= num %></span>
+</div>
+                        </div>
+                    <% }) %>
+                </div>
+
+                <!-- Status Message -->
+                <div id="game-status" class="alert-custom d-none"></div>
+
+                <!-- Organized Bet Buttons -->
+                <div class="betting-section">
+                    <p class="text-center text-white-50 small mb-2">SELECT YOUR CHAMPION (BET: ₱10.00)</p>
+                    <div class="bet-grid">
+                        <button onclick="placeHorseBet(1)" class="bet-btn btn-h1"><span>1</span></button>
+                        <button onclick="placeHorseBet(2)" class="bet-btn btn-h2"><span>2</span></button>
+                        <button onclick="placeHorseBet(3)" class="bet-btn btn-h3"><span>3</span></button>
+                        <button onclick="placeHorseBet(4)" class="bet-btn btn-h4"><span>4</span></button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+async function placeHorseBet(horseNumber) {
+    const btns = document.querySelectorAll('.bet-btn');
+    const status = document.getElementById('game-status');
+    
+    // Reset positions
+    document.querySelectorAll('.horse').forEach(h => h.style.left = '0%');
+    
+    // Disable buttons
+    btns.forEach(b => b.disabled = true);
+    status.classList.remove('d-none', 'alert-success', 'alert-danger');
+    status.classList.add('alert-info');
+    status.innerText = "🏇 The race is starting...";
+
+    try {
+        const response = await fetch('/bet/horserace', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ choice: horseNumber, amount: 10 })
+        });
+
+        const data = await response.json();
+
+        if (data.error) {
+            status.classList.replace('alert-info', 'alert-danger');
+            status.innerText = data.error;
+            btns.forEach(b => b.disabled = false);
+            return;
+        }
+
+        // Animation logic
+       setTimeout(() => {
+        document.querySelectorAll('.horse').forEach((h, index) => {
+            const isWinner = (index + 1) == data.winningHorse;
+            h.style.left = isWinner ? '85%' : Math.floor(Math.random() * 60 + 20) + '%';
+            
+            if(isWinner) {
+                h.classList.add('winner-glow'); // Dagdag effect sa nanalo
+            }
+        });
+    }, 100);
+    
+
+        // Result display
+        setTimeout(() => {
+           if (data.result === 'win') {
+
+    status.classList.replace('alert-info', 'alert-success');
+
+    status.innerHTML = `
+        <h3 class="fw-bold">🎉 YOU WIN!</h3>
+        <p>Horse ${data.winningHorse} won the race!</p>
+        <h4 class="text-warning">₱${data.payout}</h4>
+    `;
+
+} else {
+
+    status.classList.replace('alert-info', 'alert-danger');
+
+    status.innerHTML = `
+        <h3 class="fw-bold">❌ YOU LOSE!</h3>
+        <p>Horse ${data.winningHorse} won the race.</p>
+        <small>Try Again!</small>
+    `;
+}
+            // Update balance UI
+          setTimeout(() => {
+        location.reload();
+    }, 3000);
+
+}, 3500);
+
+    } catch (err) {
+        console.error(err);
+        alert("Something went wrong.");
+        btns.forEach(b => b.disabled = false);
+    }
+}
+</script>

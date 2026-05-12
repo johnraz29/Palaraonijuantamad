@@ -1,0 +1,130 @@
+<link rel="stylesheet" href="/houseledger.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+<div class="ledger-container">
+
+    <div class="ledger-header">
+        <h2><i class="fas fa-vault"></i> House Ledger</h2>
+        <a href="/admin" class="btn-back" style="text-decoration: none; color: #d4af37; font-weight: bold;">← Back to Admin</a>
+    </div>
+
+    <div class="ledger-cards">
+
+        <div class="ledger-card blue">
+            <div class="card-content">
+                <h5>Sabong Commission (20%)</h5>
+                <p>₱<%= sabongEarnings.toLocaleString() %></p>
+                <span>Total Volume: ₱<%= totalSabongVolume.toLocaleString() %></span>
+            </div>
+        </div>
+
+        <div class="ledger-card green">
+            <div class="card-content">
+                <h5>Draw/Lotto Net Revenue</h5>
+                <p>₱<%= drawEarnings.toLocaleString() %></p>
+                <% if (typeof totalDrawPayouts !== 'undefined') { %>
+                    <span style="color: #ff7675;">Total Payouts: -₱<%= totalDrawPayouts.toLocaleString() %></span>
+                <% } else { %>
+                    <span>Total Tickets: <%= drawBets.length %></span>
+                <% } %>
+            </div>
+        </div>
+
+        <div class="ledger-card gold">
+            <div class="card-content">
+                <h5>Total House Net Income</h5>
+                <p style="font-size: 2rem;">₱<%= totalHouseEarnings.toLocaleString() %></p>
+                <span>Consolidated Revenue (After Payouts)</span>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="ledger-table">
+        <div class="table-header red" style="background: #c0392b; color: white; padding: 15px; border-radius: 10px 10px 0 0; font-weight: bold;">
+            <i class="fas fa-fire"></i> Online Sabong Logs
+        </div>
+
+        <div class="table-body" style="background: #2c3e50; border-radius: 0 0 10px 10px; overflow: hidden;">
+            <table style="width: 100%; border-collapse: collapse; color: white;">
+                <thead>
+                    <tr style="background: rgba(0,0,0,0.2);">
+                        <th style="padding: 12px; text-align: left;">Date</th>
+                        <th style="padding: 12px; text-align: left;">User</th>
+                        <th style="padding: 12px; text-align: left;">Bet</th>
+                        <th style="padding: 12px; text-align: left;">Status</th>
+                        <th style="padding: 12px; text-align: left;">House Cut (20%)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% sabongBets.forEach(bet => { %>
+                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                        <td style="padding: 12px;"><%= new Date(bet.created_at).toLocaleString() %></td>
+                        <td style="padding: 12px; color: #d4af37;">#<%= bet.user_id %></td>
+                        <td style="padding: 12px;">₱<%= bet.amount.toLocaleString() %></td>
+                        <td style="padding: 12px;">
+                            <span class="status <%= (bet && bet.status) ? (bet.status.toString().toLowerCase() === 'won' ? 'win' : 'lose') : 'pending' %>">
+                                <%= (bet && bet.status) ? bet.status.toString().toUpperCase() : 'NO STATUS' %>
+                            </span>
+                        </td>
+                        <td class="income" style="padding: 12px; color: #2ecc71; font-weight: bold;">+₱<%= (bet.amount * 0.20).toFixed(2) %></td>
+                    </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="ledger-table" style="margin-top: 30px;">
+        <div class="table-header yellow" style="background: #f1c40f; color: #000; padding: 15px; border-radius: 10px 10px 0 0; font-weight: bold;">
+            <i class="fas fa-ticket-alt"></i> Online Draw & Jackpot Logs
+        </div>
+
+        <div class="table-body" style="background: #2c3e50; border-radius: 0 0 10px 10px; overflow: hidden;">
+            <table style="width: 100%; border-collapse: collapse; color: white;">
+                <thead>
+                    <tr style="background: rgba(0,0,0,0.2);">
+                        <th style="padding: 12px; text-align: left;">Date</th>
+                        <th style="padding: 12px; text-align: left;">User</th>
+                        <th style="padding: 12px; text-align: left;">Game</th>
+                        <th style="padding: 12px; text-align: left;">Bet Amount</th>
+                        <th style="padding: 12px; text-align: left;">House P/L</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% drawBets.forEach(bet => { %>
+                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                        <td style="padding: 12px;"><%= new Date(bet.created_at).toLocaleString() %></td>
+                        <td style="padding: 12px; color: #d4af37;">#<%= bet.user_id %></td>
+                        <td style="padding: 12px;"><%= bet.game_type === 'lotto' ? 'Lotto 6/45' : '2-Digit Game' %></td>
+                        <td style="padding: 12px;">₱<%= bet.amount.toLocaleString() %></td>
+                        <td style="padding: 12px; font-weight: bold;">
+                            <% if (bet.status === 'won') { %>
+                                <span style="color: #e74c3c;">-₱<%= (bet.payout || 0).toLocaleString() %> (PAYOUT)</span>
+                            <% } else if (bet.status === 'pending') { %>
+                                <span style="color: #f1c40f;">PENDING</span>
+                            <% } else { %>
+                                <span style="color: #2ecc71;">+₱<%= bet.amount.toLocaleString() %></span>
+                            <% } %>
+                        </td>
+                    </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<style>
+    .income { font-weight: bold; }
+    .status { padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; display: inline-block; }
+    .status.win { background: #27ae60; color: #fff; }
+    .status.lose { background: #555; color: #eee; }
+    .status.pending { background: #777; color: #fff; }
+    .ledger-card { padding: 20px; border-radius: 15px; color: white; min-width: 250px; }
+    .blue { background: linear-gradient(135deg, #3498db, #2980b9); }
+    .green { background: linear-gradient(135deg, #27ae60, #219150); }
+    .gold { background: linear-gradient(135deg, #f1c40f, #d4af37); color: #000; }
+    .ledger-cards { display: flex; gap: 20px; margin-bottom: 30px; flex-wrap: wrap; }
+</style>

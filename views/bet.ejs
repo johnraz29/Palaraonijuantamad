@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Place Bet</title>
+<link rel="stylesheet" href="/bet.css" />
+</head>
+<body>
+<header>
+    <div class="logo">
+        <img src="/images/Logopalaronijuan.png" alt="Logo">
+        <h1>Place Your Bet</h1>
+    </div>
+</header>
+
+<main>
+<section class="bet-section">
+    <h2>Place Bet</h2>
+    <p>Choose <strong>6 unique numbers</strong> between 1 and 50. Cost: ₱10</p>
+    
+    <form id="betForm" method="post" action="/bet">
+        <div class="number-grid">
+            <% for (let i = 1; i <= 50; i++) { %>
+                <button type="button" class="number-btn" data-number="<%= i %>"><%= i %></button>
+            <% } %>
+        </div>
+        <input type="hidden" name="numbers" id="numbersInput" required>
+        <div class="selected-numbers">
+            <p>Selected Numbers: <span id="selectedNumbers">None</span></p>
+        </div>
+        <button type="submit" class="submit-btn">Place Bet (₱10)</button>
+    </form>
+</section>
+</main>
+
+<script>
+const selectedNumbers = [];
+const maxNumbers = 6;
+
+const buttons = document.querySelectorAll('.number-btn');
+const numbersInput = document.getElementById('numbersInput');
+const selectedNumbersDisplay = document.getElementById('selectedNumbers');
+
+buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+        const num = parseInt(btn.dataset.number);
+        if (selectedNumbers.includes(num)) {
+            // Remove number if clicked again
+            const index = selectedNumbers.indexOf(num);
+            selectedNumbers.splice(index, 1);
+            btn.classList.remove('selected');
+        } else {
+            if (selectedNumbers.length < maxNumbers) {
+                selectedNumbers.push(num);
+                btn.classList.add('selected');
+            } else {
+                alert('You can only select 6 numbers!');
+            }
+        }
+        // Update hidden input and display
+        numbersInput.value = selectedNumbers.join(',');
+        selectedNumbersDisplay.textContent = selectedNumbers.length > 0 ? selectedNumbers.join(', ') : 'None';
+    });
+});
+
+// Validate on form submit
+document.getElementById('betForm').addEventListener('submit', e => {
+    if (selectedNumbers.length !== maxNumbers) {
+        e.preventDefault();
+        alert('Please select exactly 6 unique numbers!');
+    }
+});
+</script>
+</body>
+</html>

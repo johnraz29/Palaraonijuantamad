@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Welcome</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<section>
+  <h2>Welcome</h2>
+  <p>Play the online draw. Bets: Monday to Friday only. ₱20 per entry. Select 6 numbers from 1 to 50.</p>
+
+  <% if (!user) { %>
+    <p><a href="/register">Register</a> or <a href="/login">Login</a> to begin.</p>
+  <% } else { %>
+    <p><a href="/dashboard">Go to your dashboard</a></p>
+  <% } %>
+</section>
+
+</body>
+</html>
