@@ -37,63 +37,67 @@
 <script>
 document.addEventListener('DOMContentLoaded', () => {
 
-    let selectedNumbers = [];
     const maxNumbers = 6;
+
+    let selectedNumbers = [];
 
     const buttons = document.querySelectorAll('.number-btn');
     const numbersInput = document.getElementById('numbersInput');
     const selectedNumbersDisplay = document.getElementById('selectedNumbers');
 
+    function updateUI() {
+
+        numbersInput.value = selectedNumbers.join(',');
+
+        selectedNumbersDisplay.textContent =
+            selectedNumbers.length ? selectedNumbers.join(', ') : 'None';
+
+        buttons.forEach(btn => {
+            const num = parseInt(btn.dataset.number);
+
+            if (selectedNumbers.includes(num)) {
+                btn.classList.add('selected');
+            } else {
+                btn.classList.remove('selected');
+            }
+        });
+    }
+
     buttons.forEach(btn => {
 
-        btn.addEventListener('click', function(e) {
+        btn.addEventListener('click', () => {
 
-            e.preventDefault();
+            const num = parseInt(btn.dataset.number);
 
-            const num = parseInt(this.dataset.number);
+            const index = selectedNumbers.indexOf(num);
 
-            // REMOVE NUMBER
-            if (selectedNumbers.includes(num)) {
-
-                selectedNumbers = selectedNumbers.filter(n => n !== num);
-
-                this.classList.remove('selected');
-
-            } 
-            // ADD NUMBER
-            else {
-
-                if (selectedNumbers.length >= maxNumbers) {
-                    alert('6 numbers only!');
-                    return;
-                }
-
-                selectedNumbers.push(num);
-
-                this.classList.add('selected');
+            // TOGGLE REMOVE
+            if (index > -1) {
+                selectedNumbers.splice(index, 1);
+                updateUI();
+                return;
             }
 
-            // UPDATE DISPLAY
-            numbersInput.value = selectedNumbers.join(',');
+            // LIMIT CHECK
+            if (selectedNumbers.length >= maxNumbers) {
+                alert('6 numbers only!');
+                return;
+            }
 
-            selectedNumbersDisplay.textContent =
-                selectedNumbers.length > 0
-                ? selectedNumbers.join(', ')
-                : 'None';
+            // ADD NUMBER
+            selectedNumbers.push(num);
+
+            updateUI();
+
         });
 
     });
 
-    // FORM VALIDATION
-    document.getElementById('betForm').addEventListener('submit', function(e) {
+    document.getElementById('betForm').addEventListener('submit', (e) => {
 
         if (selectedNumbers.length !== 6) {
-
             e.preventDefault();
-
             alert('Please select exactly 6 numbers.');
-
-            return false;
         }
 
     });
