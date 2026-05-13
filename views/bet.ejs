@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Place Bet</title>
-<link rel="stylesheet" href="/bet.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Place Bet</title>
+    <link rel="stylesheet" href="/bet.css" />
 </head>
 <body>
 <header>
@@ -25,9 +25,11 @@
                 <button type="button" class="number-btn" data-number="<%= i %>"><%= i %></button>
             <% } %>
         </div>
+        <!-- Dito itatago ang 6 numbers para ma-submit sa server -->
         <input type="hidden" name="numbers" id="numbersInput" required>
+        
         <div class="selected-numbers">
-            <p>Selected Numbers: <span id="selectedNumbers">None</span></p>
+            <p>Selected Numbers: <span id="selectedNumbersDisplay">None</span></p>
         </div>
         <button type="submit" class="submit-btn">Place Bet (₱10)</button>
     </form>
@@ -36,25 +38,23 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-
     const maxNumbers = 6;
-
     let selectedNumbers = [];
 
     const buttons = document.querySelectorAll('.number-btn');
     const numbersInput = document.getElementById('numbersInput');
-    const selectedNumbersDisplay = document.getElementById('selectedNumbers');
+    const display = document.getElementById('selectedNumbersDisplay');
 
     function updateUI() {
-
+        // I-update ang hidden input value para sa server.js
         numbersInput.value = selectedNumbers.join(',');
 
-        selectedNumbersDisplay.textContent =
-            selectedNumbers.length ? selectedNumbers.join(', ') : 'None';
+        // I-update ang text display sa screen
+        display.textContent = selectedNumbers.length ? selectedNumbers.join(', ') : 'None';
 
+        // I-update ang kulay ng mga buttons
         buttons.forEach(btn => {
             const num = parseInt(btn.dataset.number);
-
             if (selectedNumbers.includes(num)) {
                 btn.classList.add('selected');
             } else {
@@ -64,45 +64,49 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     buttons.forEach(btn => {
-
-        btn.addEventListener('click', () => {
+        btn.addEventListener('click', (e) => {
+            // STOP THE DEFAULT BEHAVIOR (Importante sa Railway/Mobile)
+            e.preventDefault();
+            e.stopPropagation();
 
             const num = parseInt(btn.dataset.number);
-
             const index = selectedNumbers.indexOf(num);
 
-            // TOGGLE REMOVE
+            // Kapag pinindot ulit ang numerong napili na (Toggle Off)
             if (index > -1) {
                 selectedNumbers.splice(index, 1);
-                updateUI();
-                return;
+            } 
+            // Kapag magdadagdag ng numero
+            else {
+                if (selectedNumbers.length < maxNumbers) {
+                    selectedNumbers.push(num);
+                } else {
+                    alert('You can only select 6 numbers.');
+                }
             }
-
-            // LIMIT CHECK
-            if (selectedNumbers.length >= maxNumbers) {
-                alert('6 numbers only!');
-                return;
-            }
-
-            // ADD NUMBER
-            selectedNumbers.push(num);
-
+            
             updateUI();
-
         });
-
     });
 
+    // Validation bago i-submit ang form
     document.getElementById('betForm').addEventListener('submit', (e) => {
-
         if (selectedNumbers.length !== 6) {
-            e.preventDefault();
-            alert('Please select exactly 6 numbers.');
+            e.preventDefault(); // Huwag ituloy ang submit kung hindi 6 ang numbers
+            alert('Please select exactly 6 numbers before placing your bet.');
         }
-
     });
-
 });
 </script>
+
+<style>
+    /* Siguraduhin na may visual feedback ang 'selected' class */
+    .number-btn.selected {
+        background-color: #ffc107 !important; /* Gold/Yellow */
+        color: #000 !important;
+        font-weight: bold;
+        border: 2px solid #000;
+    }
+</style>
 </body>
 </html>
