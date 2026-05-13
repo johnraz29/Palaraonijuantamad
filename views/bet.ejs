@@ -22,7 +22,7 @@
     <form id="betForm" method="post" action="/bet">
         <div class="number-grid">
             <% for (let i = 1; i <= 50; i++) { %>
-                <button type="button" class="number-btn" data-number="<%= i %>"><%= i %></button>
+               <button onclick="return false;" type="button" class="number-btn" data-number="<%= i %>"><%= i %></button>
             <% } %>
         </div>
         <!-- Dito itatago ang 6 numbers para ma-submit sa server -->
