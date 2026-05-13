@@ -179,3 +179,9 @@ h2 {
     font-weight: bold;
     border: 2px solid #000;
 }
+
+.number-btn.selected {
+    background: gold !important;
+    color: black !important;
+    border: 2px solid black !important;
+}
