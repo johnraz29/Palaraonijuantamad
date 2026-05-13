@@ -35,67 +35,85 @@
     </form>
 </section>
 </main>
-
 <script>
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', function () {
+
     const maxNumbers = 6;
-    let selectedNumbers = [];
+    const selectedNumbers = [];
 
     const buttons = document.querySelectorAll('.number-btn');
     const numbersInput = document.getElementById('numbersInput');
     const display = document.getElementById('selectedNumbersDisplay');
+    const form = document.getElementById('betForm');
 
-    function updateUI() {
-        // I-update ang hidden input value para sa server.js
+    function renderSelected() {
+
+        // update hidden input
         numbersInput.value = selectedNumbers.join(',');
 
-        // I-update ang text display sa screen
-        display.textContent = selectedNumbers.length ? selectedNumbers.join(', ') : 'None';
+        // update display
+        if (selectedNumbers.length > 0) {
+            display.textContent = selectedNumbers.join(', ');
+        } else {
+            display.textContent = 'None';
+        }
 
-        // I-update ang kulay ng mga buttons
+        // update buttons
         buttons.forEach(btn => {
-            const num = parseInt(btn.dataset.number);
-            if (selectedNumbers.includes(num)) {
+
+            const value = Number(btn.dataset.number);
+
+            if (selectedNumbers.includes(value)) {
                 btn.classList.add('selected');
             } else {
                 btn.classList.remove('selected');
             }
+
         });
     }
 
     buttons.forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            // STOP THE DEFAULT BEHAVIOR (Importante sa Railway/Mobile)
+
+        btn.addEventListener('click', function (e) {
+
             e.preventDefault();
-            e.stopPropagation();
 
-            const num = parseInt(btn.dataset.number);
-            const index = selectedNumbers.indexOf(num);
+            const value = Number(this.dataset.number);
 
-            // Kapag pinindot ulit ang numerong napili na (Toggle Off)
-            if (index > -1) {
-                selectedNumbers.splice(index, 1);
-            } 
-            // Kapag magdadagdag ng numero
-            else {
-                if (selectedNumbers.length < maxNumbers) {
-                    selectedNumbers.push(num);
-                } else {
+            const existingIndex = selectedNumbers.indexOf(value);
+
+            // remove if already selected
+            if (existingIndex !== -1) {
+
+                selectedNumbers.splice(existingIndex, 1);
+
+            } else {
+
+                // limit to 6
+                if (selectedNumbers.length >= maxNumbers) {
                     alert('You can only select 6 numbers.');
+                    return;
                 }
+
+                selectedNumbers.push(value);
             }
-            
-            updateUI();
+
+            renderSelected();
         });
+
     });
 
-    // Validation bago i-submit ang form
-    document.getElementById('betForm').addEventListener('submit', (e) => {
+    form.addEventListener('submit', function (e) {
+
         if (selectedNumbers.length !== 6) {
-            e.preventDefault(); // Huwag ituloy ang submit kung hindi 6 ang numbers
-            alert('Please select exactly 6 numbers before placing your bet.');
+
+            e.preventDefault();
+            alert('Please select exactly 6 numbers.');
+
         }
+
     });
+
 });
 </script>
 
